@@ -1,26 +1,32 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useRef } from "react";
+import THREE from "three";
+import { Canvas, useFrame } from "react-three-fiber";
 
-const App: React.FC = () => {
+function Thing() {
+  const ref = useRef<THREE.Mesh>();
+  useFrame(() => {
+    if (ref.current) {
+      ref.current.rotation.x = ref.current.rotation.y += 0.01;
+    }
+  });
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <mesh
+      ref={ref}
+      onClick={e => console.log("click")}
+      onPointerOver={e => console.log("hover")}
+      onPointerOut={e => console.log("unhover")}
+    >
+      <boxBufferGeometry attach="geometry" args={[1, 1, 1]} />
+      <meshNormalMaterial attach="material" />
+    </mesh>
   );
 }
+
+const App = () => (
+  <Canvas>
+    <Thing></Thing>
+  </Canvas>
+);
 
 export default App;
