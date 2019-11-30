@@ -1,26 +1,40 @@
 import React, { useState } from 'react';
 import { Canvas } from 'react-three-fiber';
 import styled from 'styled-components';
+import { inspect } from 'util';
 
 import Cube from './cube';
 
+const Container = styled.div`
+  display: inline-flex;
+  height: 100vh;
+  width: 100vw;
+`;
+
 const Stats = styled.div`
-  position: absolute;
-  width: 20rem;
-  height: auto;
-  background-color: rgba(0, 0, 0, 0.1);
-  word-wrap: break-word;
+  top: 0;
+  width: auto;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  overflow: scroll;
+  word-wrap: break-all;
+  line-height: 0.25rem;
+  color: grey;
 `;
 
 const App = () => {
   const [stats, setStats] = useState('somethinsomethingg');
   return (
-    <>
-      <Stats>{stats}</Stats>
+    <Container>
+      <Stats>
+        {stats.split(',').map(line => (
+          <p>{line}</p>
+        ))}
+      </Stats>
       <Canvas>
-        <Cube size={1} onChange={e => setStats(JSON.stringify(e))} />
+        <Cube size={2} onChange={e => setStats(inspect(e))} />
       </Canvas>
-    </>
+    </Container>
   );
 };
 export default App;

@@ -1,6 +1,7 @@
 import React, { useRef, useState, useEffect } from 'react';
 import * as three from 'three';
-import { useFrame } from 'react-three-fiber';
+import { useDrag } from 'react-use-gesture';
+import { useSpring, a, interpolate } from 'react-spring/three';
 
 type Props = {
   size: number;
@@ -8,64 +9,76 @@ type Props = {
 };
 
 const Cube = ({ size, onChange }: Props) => {
-  const [point, setPoint] = useState<three.Vector3>();
-  const [click, setClick] = useState(false);
   const ref = useRef<three.Mesh>();
 
-  // useFrame(() => {
-  //   if (ref.current && point) {
-  //     // ref.current.rotation.x = ref.current.rotation.y += 0.01;
-  //     ref.current.rotation.x += point.x;
-  //     ref.current.rotation.y += point.y;
-  //     ref.current.rotation.z += point.z;
-  //     // onChange(ref.current.rotation);
-  //     onChange(point);
-  //   }
-  // });
+  const [{ rotation }, set] = useSpring(() => ({
+    rotation: [0, 0, 0]
+  }));
 
-  const thing = 10;
+  const [{ qx, qy }, setQuat] = useSpring(() => ({
+    qx: 0,
+    qy: 0
+  }));
 
-  useEffect(() => {
-    if (ref.current && point && click) {
-      // ref.current.rotation.x = ref.current.rotation.y += 0.01;
-      // ref.current.rotation.x += point.x / thing;
-      // ref.current.rotation.y += point.y / thing;
-      // ref.current.rotation.z += point.z / thing;
-      // onChange(ref.current.rotation);
-      onChange(point);
-      const deltaRotationQuaternion = new three.Quaternion().setFromEuler(
-        new three.Euler(
-          toRadians(point.y * 1),
-          toRadians(point.x * 1),
-          0,
-          'XYZ'
-        )
-      );
+  const dampen = 100;
+  const bindDrag = useDrag(
+    ({ offset: [ox, oy], last, vxvy: [vx, vy], xy, down, delta, ...props }) => {
+      set({ rotation: [oy / dampen, ox / dampen, 0] });
 
-      ref.current.quaternion.multiplyQuaternions(
-        deltaRotationQuaternion,
-        ref.current.quaternion
-      );
-    }
-  }, [point]);
+      // setQuat({ qx: delta[0], qy: delta[1] });
+
+      // if (ref.current) {
+      //   var deltaRotationQuaternion = new three.Quaternion().setFromEuler(
+      //     new three.Euler(
+      //       toRadians(delta[1] * 1),
+      //       toRadians(delta[0] * 1),
+      //       0,
+      //       'XYZ'
+      //     )
+      //   );
+
+      //   ref.current.quaternion.multiplyQuaternions(
+      //     deltaRotationQuaternion,
+      //     ref.current.quaternion
+      //   );
+      // }
+
+      onChange({
+        down,
+        xy,
+        oy,
+        ox,
+        vy,
+        vx,
+        props,
+        cubeRotation:
+          ref.current && ref.current.rotation.toArray().map(toDegrees)
+      });
+    },
+    { pointerEvents: true }
+  );
 
   return (
-    <mesh
+    <a.mesh
       ref={ref}
-      onPointerMove={e => {
-        // onChange(e.point);
-        setPoint(e.point);
-      }}
-      onPointerDown={() => {
-        !click && setClick(true);
-      }}
-      onPointerUp={() => {
-        click && setClick(false);
-      }}
+      {...bindDrag()}
+      rotation={rotation}
+      // quaternion={interpolate([qx, qy], (qx, qy) => {
+      //   if (ref.current) {
+      //     var deltaRotationQuaternion = new three.Quaternion().setFromEuler(
+      //       new three.Euler(toRadians(qy * 1), toRadians(qx * 1), 0, 'XYZ')
+      //     );
+      //     return deltaRotationQuaternion.multiplyQuaternions(
+      //       deltaRotationQuaternion,
+      //       ref.current.quaternion
+      //     );
+      //   }
+      //   return new three.Quaternion();
+      // })}
     >
       <boxBufferGeometry attach="geometry" args={[size, size, size]} />
       <meshNormalMaterial attach="material" />
-    </mesh>
+    </a.mesh>
   );
 };
 
@@ -73,4 +86,8 @@ export default Cube;
 
 function toRadians(angle: number) {
   return angle * (Math.PI / 180);
+}
+
+function toDegrees(angle: number) {
+  return angle * (180 / Math.PI);
 }
