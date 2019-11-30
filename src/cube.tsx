@@ -1,148 +1,122 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import * as three from 'three';
+import { SubdivisionModifier } from 'three/examples/jsm/modifiers/SubdivisionModifier';
 import { useDrag } from 'react-use-gesture';
-import { useSpring, a, interpolate } from 'react-spring/three';
-import { config } from 'react-spring';
-import { on } from 'cluster';
+import { useSpring, a, } from 'react-spring/three';
 
 type Props = {
   size: number;
   onChange: (e: any) => void;
 };
 
+
+const modifier = new SubdivisionModifier(2);
+const segments = 3;
+const cubeGeometry = new three.BoxBufferGeometry(1, 1, 1, segments, segments, segments);
+// const smooth = cubeGeometry;
+const smooth = modifier.modify(cubeGeometry);
+
 const Cube = ({ size, onChange }: Props) => {
   const ref = useRef<three.Mesh>();
-  const [initialQuat, setInitialQuat] = useState<three.Quaternion>(
-    new three.Quaternion()
-  );
+  const [snakePos, setSnakePos] = useState({ x: 0, y: 0, z: size / 2 })
+  const snakeRef = useRef<three.Mesh>();
+
+  // set scall on init
+  useEffect(() => {
+    smooth.scale(size, size, size);
+  }, []);
+
+  const move = (e: KeyboardEvent) => {
+    console.log(e.key);
+    if (snakeRef.current) {
+      switch (e.key.toUpperCase()) {
+        case 'W':
+        case 'ARROWUP':
+          setSnakePos(prev => ({ ...prev, y: prev.y + 1 }))
+          break;
+        case 'S':
+        case 'ARROWDOWN':
+          setSnakePos(prev => ({ ...prev, y: prev.y - 1 }))
+          break;
+        case 'D':
+        case 'ARROWRIGHT':
+          setSnakePos(prev => ({ ...prev, x: prev.x + 1 }))
+          break;
+        case 'A':
+        case 'ARROWLEFT':
+          setSnakePos(prev => ({ ...prev, x: prev.x - 1 }))
+          break;
+        default:
+      }
+
+    }
+  }
+
+  useEffect(() => {
+    window.addEventListener("keydown", move as any);
+    return () => { window.removeEventListener("keydown", move) };
+  });
 
   const [{ rotation }, set] = useSpring(() => ({
     rotation: [0, 0, 0]
-  }));
-
-  const [{ qx, qy }, setQuat] = useSpring(() => ({
-    qx: 0,
-    qy: 0
-  }));
-
-  const [{ x, y, z, w }, setQuat2] = useSpring(() => ({
-    x: 0,
-    y: 0,
-    z: 0,
-    w: 1
   }));
 
   const dampen = 100;
   const bindDrag = useDrag(
     ({
       offset: [ox, oy],
-      first,
-      vxvy: [vx, vy],
-      xy,
-      down,
-      delta: [dx, dy],
-      initial: [ix, iy],
-      movement: [mx, my]
     }) => {
-      // set({ rotation: [oy / dampen, ox / dampen, 0] });
-      if (first && ref.current) {
-        console.log('setting');
-        setInitialQuat(ref.current.quaternion);
-      }
-      setQuat({ qx: mx / dampen, qy: my / dampen });
-      onChange({
-        ix,
-        iy,
-        mx,
-        my,
-        ox,
-        oy
-      });
-      // if (ref.current) {
-      //   const deltaRotationQuaternion = new three.Quaternion().setFromEuler(
-      //     new three.Euler(toRadians(delta[1]), toRadians(delta[0]), 0, 'XYZ')
-      //   );
-
-      //   const cur = ref.current.quaternion.clone();
-
-      //   // deltaRotationQuaternion.multiplyQuaternions(
-      //   //   cur,
-      //   //   deltaRotationQuaternion
-      //   // );
-
-      //   ref.current.quaternion.multiplyQuaternions(
-      //     deltaRotationQuaternion,
-      //     ref.current.quaternion
-      //   );
-
-      //   const test = deltaRotationQuaternion
-      //     .multiplyQuaternions(cur, deltaRotationQuaternion)
-      //     .equals(ref.current.quaternion);
-      //   console.log(test);
-      // const q = deltaRotationQuaternion.toArray();
-      // ref.current.quaternion.set(q[0], q[1], q[3], q[4]);
-      // onChange(q);
-
-      // setQuat2({ x: q[0], y: q[1], z: q[2], w: q[3] });
-      // }
-      // onChange({
-      //   down,
-      //   xy,
-      //   oy,
-      //   ox,
-      //   vy,
-      //   vx,
-      //   props,
-      //   cubeRotation:
-      //     ref.current && ref.current.rotation.toArray().map(toDegrees),
-      //   cubQuate: ref.current && ref.current.quaternion.toArray()
-      // });
+      const [x, y] = [ox / dampen, oy / dampen];
+      onChange({ x, y });
+      set({ rotation: [Math.abs(y) <= 1 ? y : Math.sign(y), x, 0] });
     },
     { pointerEvents: true }
   );
 
+  const snakeSegmentSize = (size / 3) - .05;
   return (
     <>
-      <a.mesh
+      <a.group
         ref={ref}
         {...bindDrag()}
-        // quaternion={interpolate(
-        //   [x, y, z, w],
-        //   (x, y, z, w) => new three.Quaternion(x, y, z, w)
-        // )}
-        // rotation={rotation}
-        quaternion={interpolate([qx, qy], (qx, qy) => {
-          const q = posToQuat(qx, qy);
-          return initialQuat.slerp(q, 1);
-        })}
-        // quaternion={interpolate([qx, qy], (qx, qy) => {
-        //   onChange({
-        //     ref: ref.current && ref.current.quaternion.toArray(),
-        //     qx,
-        //     qy
-        //   });
-        //   if (ref.current) {
-        //     const temp = new three.Quaternion();
-        //     const deltaRotationQuaternion = new three.Quaternion().setFromEuler(
-        //       new three.Euler(toRadians(qy), toRadians(qx), 0, 'XYZ')
-        //     );
-
-        //     const cur = ref.current.quaternion.clone();
-        //     deltaRotationQuaternion.multiplyQuaternions(
-        //       deltaRotationQuaternion,
-        //       cur
-        //     );
-        //     three.Quaternion.slerp(cur, deltaRotationQuaternion, temp, 0.2);
-        //     return temp;
-        //   }
-        //   return new three.Quaternion();
-        // })}
+        rotation={rotation}
       >
-        <boxBufferGeometry attach="geometry" args={[size, size, size]} />
-        <meshNormalMaterial attach="material" />
-      </a.mesh>
+        <mesh ref={snakeRef}
+          position={[snakePos.x, snakePos.y, snakePos.z]}
+        >
+          <boxBufferGeometry attach="geometry" args={[snakeSegmentSize, snakeSegmentSize, snakeSegmentSize]} />
+          <meshNormalMaterial attach="material" />
+        </mesh>
+        <mesh>
+          <boxBufferGeometry attach="geometry" args={[size, size, size, segments, segments, segments]} />
+          <meshPhysicalMaterial attach="material"
+            color="black"
+            roughness={.8}
+            clearcoat={.1}
+            reflectivity={.2}
+            metalness={.3}
+            transparent={true}
+            opacity={.7}
+            wireframe={true}
+          />
+        </mesh>
+        <mesh
+        // geometry={smooth}
+        >
+          <boxBufferGeometry attach="geometry" args={[size - .1, size - .1, size - .1]} />
+          <meshPhysicalMaterial attach="material"
+            color="pink"
+            roughness={.8}
+            clearcoat={.1}
+            reflectivity={.2}
+            metalness={.3}
+            transparent={true}
+            opacity={.7}
+          />
+        </mesh>
+      </a.group>
     </>
-  );
+  )
 };
 
 export default Cube;

@@ -33,7 +33,17 @@ const App = () => {
         ))}
       </Stats>
       <Canvas>
-        <Cube size={2} onChange={e => setStats(inspect(e))} />
+        <ambientLight intensity={1} />
+        <spotLight
+          intensity={2}
+          position={[20, 10, 10]}
+          angle={0.2}
+          penumbra={1}
+          shadow-mapSize-width={2048}
+          shadow-mapSize-height={2048}
+          castShadow
+        />
+        <Cube size={3} onChange={e => setStats(inspect(e))} />
       </Canvas>
     </Container>
   );
