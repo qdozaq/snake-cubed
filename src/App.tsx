@@ -14,11 +14,12 @@ const Container = styled.div`
 const Stats = styled.div`
   top: 0;
   width: auto;
+  min-width: 20em;
   height: 100%;
   background-color: rgba(0, 0, 0, 0.5);
   overflow: scroll;
   word-wrap: break-all;
-  line-height: 0.25rem;
+  /* line-height: 0.25rem; */
   color: grey;
 `;
 
