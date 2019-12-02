@@ -23,16 +23,17 @@ const Stats = styled.div`
   color: grey;
 `;
 
+const SIZE = 3;
 const App = () => {
   const [stats, setStats] = useState('somethinsomethingg');
   return (
     <Container>
-      <Stats>
+      {/* <Stats>
         {stats.split(',').map(line => (
           <p>{line}</p>
         ))}
-      </Stats>
-      <Canvas>
+      </Stats> */}
+      <Canvas camera={{ position: [0, 0, SIZE * 2.5], far: 50 }}>
         <ambientLight intensity={1} />
         <spotLight
           intensity={2}
@@ -43,7 +44,7 @@ const App = () => {
           shadow-mapSize-height={2048}
           castShadow
         />
-        <Cube size={3} onChange={e => setStats(inspect(e))} />
+        <Cube size={SIZE} />
       </Canvas>
     </Container>
   );
