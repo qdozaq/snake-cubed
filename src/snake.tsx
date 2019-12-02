@@ -32,25 +32,33 @@ const Snake = ({ size }: Props) => {
         // ref.current.translateY(1).position.round();
         // setPos(prev => ({ ...prev, y: prev.y + 1 }));
         // setVec(vec.clone().applyEuler(new three.Euler(0, angle, 0)));
-        setIndex(i => mapMove(i, front, 0, 1, size, false));
+        setIndex(i => mapMove(i, front, 0, 1, size, Direction.Y, false));
 
         break;
       case 'S':
       case 'ARROWDOWN':
         // ref.current.translateY(-1).position.round();
         // setPos(prev => ({ ...prev, y: prev.y - 1 }));
-        setIndex(i => mapMove(i, front, 0, -1, size, false));
+        setIndex(i => mapMove(i, front, 0, -1, size, Direction.Y_, false));
         break;
       case 'D':
       case 'ARROWRIGHT':
         // ref.current.translateX(1).position.round();
         // setPos(prev => ({ ...prev, x: prev.x + 1 }));
-        setIndex(i => mapMove(i, front, 1, 0, size, false));
+        setIndex(i => mapMove(i, front, 1, 0, size, Direction.X, false));
         break;
       case 'A':
       case 'ARROWLEFT':
         // ref.current.translateX(-1).position.round();
-        setIndex(i => mapMove(i, front, -1, 0, size, false));
+        setIndex(i => mapMove(i, front, -1, 0, size, Direction.X_, false));
+        break;
+      case 'Q':
+        // ref.current.translateX(-1).position.round();
+        setIndex(i => mapMove(i, front, -1, 0, size, Direction.Z, false));
+        break;
+      case 'E':
+        // ref.current.translateX(-1).position.round();
+        setIndex(i => mapMove(i, front, -1, 0, size, Direction.Z_, false));
         break;
       default:
     }
@@ -70,7 +78,6 @@ const Snake = ({ size }: Props) => {
     };
   }, []);
 
-  mapMove(index, front, 0, 1, size, true);
   return (
     // <SnakeSegment
     //   // position={[pos.x, pos.y, pos.z]}
@@ -96,7 +103,7 @@ export default Snake;
 const makething = (size: number) => {
   const front = buildthing(size, new three.Euler(0, 0, 0));
   const top = buildthing(size, new three.Euler(Math.PI / -2, 0, 0));
-  const back = buildthing(size, new three.Euler(Math.PI, 0, 0));
+  const back = buildthing(size, new three.Euler(0, Math.PI, 0));
   const bottom = buildthing(size, new three.Euler(Math.PI / 2, 0, 0));
   const right = buildthing(size, new three.Euler(0, Math.PI / 2, 0));
   const left = buildthing(size, new three.Euler(0, Math.PI / -2, 0));
@@ -131,6 +138,7 @@ const mapMove = (
   x: number,
   y: number,
   size: number,
+  direction: Direction,
   log
 ): number => {
   const panelSize = size * size;
@@ -143,9 +151,8 @@ const mapMove = (
   let rx = currentRelativeIndex % size;
   let ry = Math.floor(currentRelativeIndex / size);
   // console.log(currentPosition);
-  if (log)
-    console.log({ currentFace, currentRelativeIndex, currentIndex, rx, ry });
 
+  // relative coordinates
   rx += x;
   ry += y;
 
@@ -153,17 +160,21 @@ const mapMove = (
   let newIndex = newRelativeIndex + currentFace * panelSize;
 
   if (rx >= size || rx < 0 || ry >= size || ry < 0) {
-    const newFace = findFace(currentFace, x, y);
+    // TODO: need to figure out how to interpret the new direction and find the correct index on the new face
+    const [newFace, newdirection] = findFace(currentFace, x, y, direction);
     if (x) {
       rx = rx < 0 ? rx + size : rx - size;
     }
     if (y) {
       ry = ry < 0 ? ry + size : ry - size;
     }
+
     newRelativeIndex = rx + size * ry;
     newIndex = newRelativeIndex + newFace * panelSize;
   }
 
+  if (log)
+    console.log({ currentFace, currentRelativeIndex, currentIndex, rx, ry });
   return newIndex;
 };
 
@@ -171,47 +182,79 @@ function toRadians(angle: number) {
   return angle * (Math.PI / 180);
 }
 
+enum Face {
+  FRONT = 0,
+  TOP = 1,
+  BACK = 2,
+  BOTTOM = 3,
+  LEFT = 4,
+  RIGHT = 5
+}
+
+enum Direction {
+  X,
+  Y,
+  Z,
+  // inverses
+  X_,
+  Y_,
+  Z_
+}
+
 // const yAxisFaces = [0,5,2,4];
 // const xAxisFaces = []
-const findFace = (current, x, y) => {
+const findFace = (
+  current: Face,
+  x,
+  y,
+  direction: Direction
+): [Face, Direction] => {
   // if(yAxisFaces.includes && x){
-  //     if (y > 0) return 1;
+  //     if (y > 0) return Face.TOP;
   //     if (y < 0) return 3;
   // }
 
   // if
 
   switch (current) {
-    case 0:
-      if (x > 0) return 5; //make enums
-      if (x < 0) return 4;
-      if (y > 0) return 1;
-      if (y < 0) return 3;
-    case 1:
-      if (x > 0) return 5; //make enums
-      if (x < 0) return 4;
-      if (y > 0) return 2;
-      if (y < 0) return 0;
-    case 2:
-      if (x > 0) return 4; //make enums
-      if (x < 0) return 5;
-      if (y > 0) return 3;
-      if (y < 0) return 1;
-    case 3:
-      if (x > 0) return 5; //make enums
-      if (x < 0) return 4;
-      if (y > 0) return 0;
-      if (y < 0) return 2;
-    case 4:
-      if (x > 0) return 0; //make enums
-      if (x < 0) return 2;
-      if (y > 0) return 1;
-      if (y < 0) return 3;
-    case 5:
-      if (x > 0) return 2; //make enums
-      if (x < 0) return 0;
-      if (y > 0) return 1;
-      if (y < 0) return 3;
+    case Face.FRONT:
+      if (x > 0) return [Face.RIGHT, Direction.Z_];
+      if (x < 0) return [Face.LEFT, Direction.Z_];
+      if (y > 0) return [Face.TOP, Direction.Z_];
+      if (y < 0) return [Face.BOTTOM, Direction.Z_];
+    case Face.TOP:
+      switch (direction) {
+        case Direction.Z:
+        case Direction.Z_:
+        case Direction.X:
+        case Direction.X_:
+          return [Face.LEFT, Direction.Y_]; //tuple newface, newdirection
+      }
+    // if (x > 0) return Face.RIGHT;
+    // if (x < 0) return Face.LEFT;
+    // if (y > 0) return Face.BACK;
+    // if (y < 0) return Face.FRONT;
+    // case Face.BACK:
+    //   if (x > 0) return Face.LEFT;
+    //   if (x < 0) return Face.RIGHT;
+    //   if (y > 0) return Face.TOP;
+    //   if (y < 0) return Face.BOTTOM;
+    // case Face.BOTTOM:
+    //   if (x > 0) return Face.RIGHT;
+    //   if (x < 0) return Face.LEFT;
+    //   if (y > 0) return Face.FRONT;
+    //   if (y < 0) return Face.BACK;
+    // case Face.LEFT:
+    //   if (x > 0) return Face.FRONT;
+    //   if (x < 0) return Face.BACK;
+    //   if (y > 0) return Face.TOP;
+    //   if (y < 0) return Face.BOTTOM;
+    // case Face.RIGHT:
+    //   if (x > 0) return Face.BACK;
+    //   if (x < 0) return Face.FRONT;
+    //   if (y > 0) return Face.TOP;
+    //   if (y < 0) return Face.BOTTOM;
   }
-  return 0;
+  // return 0;
+  return [0, 0];
 };
