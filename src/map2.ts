@@ -68,6 +68,33 @@ const attach = (main: Node[], top: Node[], bottom: Node[], left: Node[], right: 
 
 }
 
+// conectEdge(node1, node2, direction, size)?
+// just find the nodes and connect in given direction?
+
+// would it be easier to  have a panel class that holds each side of nodes and keeps track of edges?
+const connectEdge = (side1: Node[], startingIndex: number, side2: Node[], topDirection: Direction, leftDirection: Direction, directionToConnectIn: Direction, size: number) => {
+  let i = 0;
+  // find node in side2 that corresponds to side1's top left
+  while (!side2[i][topDirection] && side2[i][leftDirection]) {
+    i++
+  }
+  let side2Edge = side2[i];
+
+
+  let mainTopEdge = side1[startingIndex]
+
+  i = 0;
+  while (i < size) {
+    mainTopEdge[ry] = side2Edge;
+    topEdge[mainDirection] = mainTopEdge
+    // move in main plane's x direction
+    mainTopEdge = mainTopEdge[rx];
+    topEdge = topEdge[rx];
+    i++
+  }
+
+}
+
 const buildthingNode = (size: number, direction: Direction) => {
   const panel: Node[] = [];
   // the amount the shift each plane to match cube origin

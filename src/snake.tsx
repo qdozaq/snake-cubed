@@ -31,33 +31,21 @@ const Snake = ({ size }: Props) => {
     switch (e.key.toUpperCase()) {
       case 'W':
       case 'ARROWUP':
-        // ref.current.translateY(1).position.round();
-        // setPos(prev => ({ ...prev, y: prev.y + 1 }));
-        // setVec(vec.clone().applyEuler(new three.Euler(0, angle, 0)));
-        // setIndex(i => mapMove(i, front, 0, 1, size, Direction.Y, false));
         //@ts-ignore trust me, i'm a programmer
         setIndex(i => front[i].y.index);
         break;
       case 'S':
       case 'ARROWDOWN':
-        // ref.current.translateY(-1).position.round();
-        // setPos(prev => ({ ...prev, y: prev.y - 1 }));
-        // setIndex(i => mapMove(i, front, 0, -1, size, Direction.Y_, false));
         //@ts-ignore trust me, i'm a programmer
         setIndex(i => front[i]._y.index);
         break;
       case 'D':
       case 'ARROWRIGHT':
-        // ref.current.translateX(1).position.round();
-        // setPos(prev => ({ ...prev, x: prev.x + 1 }));
-        // setIndex(i => mapMove(i, front, 1, 0, size, Direction.X, false));
         //@ts-ignore trust me, i'm a programmer
         setIndex(i => front[i].x.index);
         break;
       case 'A':
       case 'ARROWLEFT':
-        // ref.current.translateX(-1).position.round();
-        // setIndex(i => mapMove(i, front, -1, 0, size, Direction.X_, false));
         //@ts-ignore trust me, i'm a programmer
         setIndex(i => front[i]._x.index);
         break;
