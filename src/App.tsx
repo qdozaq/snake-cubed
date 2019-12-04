@@ -23,7 +23,7 @@ const Stats = styled.div`
   color: grey;
 `;
 
-const SIZE = 2;
+const SIZE = 3;
 const App = () => {
   const [stats, setStats] = useState('somethinsomethingg');
   return (
