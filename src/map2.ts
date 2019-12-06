@@ -1,6 +1,5 @@
 import { Vector3, Euler } from 'three';
 export const makething = (size: number) => {
-
   // const front = buildthing(size, new Euler(0, 0, 0));
   // const top = buildthing(size, new Euler(Math.PI / -2, 0, 0)); // 90 deg up on X
   // const back = buildthing(size, new Euler(0, Math.PI, 0)); // 180 deg on Y
@@ -15,9 +14,19 @@ export const makething = (size: number) => {
   const xSide = buildthingNode(size, Direction.X); // 90 deg right on Y
   const _xSide = buildthingNode(size, Direction._X); // 90 deg left on Y
 
-  attach(zSide, ySide, _ySide, _xSide, xSide, size);
+  attach(xSide, ySide, _ySide, zSide, _zSide);
+  attach(_xSide, ySide, _ySide, zSide, _zSide);
+  attach(ySide, _xSide, xSide, _zSide, zSide);
+  attach(_ySide, _xSide, xSide, _zSide, zSide);
+  attach(zSide, ySide, _ySide, _xSide, xSide);
+  attach(_zSide, ySide, _ySide, _xSide, xSide);
 
-  return [...zSide, ...ySide, ..._ySide, ...xSide].map((node, i) => { node.index = i; return node; });
+  return [...zSide, ...ySide, ..._ySide, ...xSide, ..._xSide, ..._zSide].map(
+    (node, i) => {
+      node.index = i;
+      return node;
+    }
+  );
 
   // const frontNodes = front.map((v) => new Node(v));
   // const topNodes = top.map((v) => new Node(v));
@@ -29,71 +38,116 @@ export const makething = (size: number) => {
   //attach these somehow?
   // front can be calculated with the current scheme
 
-
-
-
   // attach(frontNodes, topNodes, Direction.Y, Direction.Z);
-
 
   // return [...front, ...top, ...back, ...bottom, ...left, ...right];
 };
 
-const attach = (main: Node[], top: Node[], bottom: Node[], left: Node[], right: Node[], size: number) => {
-  const mainDirection = main[0].direction;
-  // direction other planes should be looking
-  // const nonMainConnectingEdge = invertDirection(mainDirection);
-  const [rx, ry] = relativeCoordsMap[mainDirection];
-  const _rx = invertDirection(rx);
+const attach = (main: Node[], ...sides: Node[][]) => {
+  sides.forEach(side => connectEdge(main, side));
+  // const mainDirection = main[0].direction;
+  // // direction other planes should be looking
+  // // const nonMainConnectingEdge = invertDirection(mainDirection);
+  // const [rx, ry] = relativeCoordsMap[mainDirection];
+  // const _rx = invertDirection(rx);
 
-  let i = 0;
-  // find node that does not have _z value and _x value aka top left for main
-  while (!top[i][mainDirection] && top[i][_rx]) {
-    i++
-  }
-  let topEdge = top[i];
-  let col = size - 1; // start top left
-  let row = 0;
-  const index = row + size * col;
-  let mainTopEdge = main[index]
+  // let i = 0;
+  // // find node that does not have _z value and _x value aka top left for main
+  // while (!top[i][mainDirection] && top[i][_rx]) {
+  //   i++;
+  // }
+  // let topEdge = top[i];
+  // let col = size - 1; // start top left
+  // let row = 0;
+  // const index = row + size * col;
+  // let mainTopEdge = main[index];
 
-  i = 0;
-  while (i < size) {
-    mainTopEdge[ry] = topEdge;
-    topEdge[mainDirection] = mainTopEdge
-    // move in main plane's x direction
-    mainTopEdge = mainTopEdge[rx];
-    topEdge = topEdge[rx];
-    i++
-  }
+  // i = 0;
+  // while (i < size) {
+  //   mainTopEdge[ry] = topEdge;
+  //   topEdge[mainDirection] = mainTopEdge;
+  //   // move in main plane's x direction
+  //   mainTopEdge = mainTopEdge[rx];
+  //   topEdge = topEdge[rx];
+  //   i++;
+  // }
+};
 
-}
+//face cant connect to it self and cant connect to it's inverted face
+// given a face that points Y face should go up until Y is undefined
+// Y face should point toward the other face until undefined
+// how to find matching corner? just pick one?
+// satisfy condition - direction != side1 direction or side2 direction and niether of their inverts
 
 // conectEdge(node1, node2, direction, size)?
-// just find the nodes and connect in given direction?
 
-// would it be easier to  have a panel class that holds each side of nodes and keeps track of edges?
-const connectEdge = (side1: Node[], startingIndex: number, side2: Node[], topDirection: Direction, leftDirection: Direction, directionToConnectIn: Direction, size: number) => {
+const memo = {};
+const connectEdge = (node1: Node[], node2: Node[]) => {
+  const direction1 = node1[0].direction;
+  const direction2 = node2[0].direction;
+
+  // if we've seen this edge combination before just ignore it
+  const memoVal = [direction1, direction2].sort().toString();
+  if (memo[memoVal]) return;
+
+  memo[memoVal] = true;
+
+  let r1 = relativeCoordsMap[direction1];
+  let r2 = relativeCoordsMap[direction2];
+  // add the inverted relative coordinates
+  r1 = r1.concat(r1.map(invertDirection));
+  r2 = r2.concat(r2.map(invertDirection));
+
+  console.log(r1, r2);
+  // find the first value that they have shared
   let i = 0;
-  // find node in side2 that corresponds to side1's top left
-  while (!side2[i][topDirection] && side2[i][leftDirection]) {
-    i++
+  while (!r1.includes(r2[i])) i++;
+
+  const sharedDirection = r2[i];
+
+  // go max direction towards side 2 and shared direction
+  let tempNode1 = node1[0];
+  while (tempNode1[direction2] != undefined) {
+    tempNode1 = tempNode1[direction2]!;
   }
-  let side2Edge = side2[i];
-
-
-  let mainTopEdge = side1[startingIndex]
-
-  i = 0;
-  while (i < size) {
-    mainTopEdge[ry] = side2Edge;
-    topEdge[mainDirection] = mainTopEdge
-    // move in main plane's x direction
-    mainTopEdge = mainTopEdge[rx];
-    topEdge = topEdge[rx];
-    i++
+  // Additional check to make sure we don't continue to another side
+  while (
+    tempNode1[sharedDirection] != undefined &&
+    tempNode1[sharedDirection].direction == direction1
+  ) {
+    tempNode1 = tempNode1[sharedDirection]!;
   }
 
-}
+  // go max direction towards side 1 and shared direction
+  let tempNode2 = node2[0];
+  while (tempNode2[direction1] != undefined) {
+    tempNode2 = tempNode2[direction1]!;
+  }
+  // Additional check to make sure we don't continue to another side
+  while (
+    tempNode2[sharedDirection] != undefined &&
+    tempNode2[sharedDirection].direction == direction2
+  ) {
+    tempNode2 = tempNode2[sharedDirection]!;
+  }
+
+  // follow this direction till we reach undefined
+  const endDirection = invertDirection(sharedDirection);
+  // the direction we want to connect in
+  // const connection1 = invertDirection(direction1);
+  // const connection2 = invertDirection(direction2);
+
+  // these should terminate at the same time
+  while (tempNode1 != undefined && tempNode2 != undefined) {
+    tempNode1[direction2] = tempNode2;
+    tempNode2[direction1] = tempNode1;
+    tempNode1 = tempNode1[endDirection];
+    tempNode2 = tempNode2[endDirection];
+  }
+  return;
+};
+
+// just find the nodes and connect in given direction?
 
 const buildthingNode = (size: number, direction: Direction) => {
   const panel: Node[] = [];
@@ -117,7 +171,7 @@ const buildthingNode = (size: number, direction: Direction) => {
   for (let col = 0; col < size; col++) {
     for (let row = 0; row < size; row++) {
       const current = row + size * col;
-      const x = (row + 1) + size * col;
+      const x = row + 1 + size * col;
       const y = row + size * (col + 1);
 
       // Link nodes
@@ -131,7 +185,6 @@ const buildthingNode = (size: number, direction: Direction) => {
         panel[current][ry] = panel[y];
         panel[y][invertDirection(ry)] = panel[current];
       }
-
     }
   }
 
@@ -141,17 +194,17 @@ const buildthingNode = (size: number, direction: Direction) => {
 // map a direction's plane to it's local [x,y] coordinates
 // should probably change to function
 const relativeCoordsMap = {
-  'x': ['_z', 'y'],
-  'y': ['x', '_z'],
-  'z': ['x', 'y'],
-  '_x': ['z', 'y'],
-  '_y': ['x', 'z'],
-  '_z': ['_x', 'y']
-}
+  x: ['_z', 'y'],
+  y: ['x', '_z'],
+  z: ['x', 'y'],
+  _x: ['z', 'y'],
+  _y: ['x', 'z'],
+  _z: ['_x', 'y']
+};
 
 const thing = 0;
 
-const invertDirection = (d: string) => d[0] === '_' ? d[1] : '_' + d;
+const invertDirection = (d: string) => (d[0] === '_' ? d[1] : '_' + d);
 
 const buildthing = (size: number, direction: Euler) => {
   const panel: Vector3[] = [];
@@ -253,22 +306,17 @@ export enum Direction {
 }
 
 const directionToEularMap = {
-  'x': new Euler(0, Math.PI / 2, 0),
-  'y': new Euler(Math.PI / -2, 0, 0),
-  'z': new Euler(0, 0, 0),
-  '_x': new Euler(0, Math.PI, 0),
-  '_y': new Euler(Math.PI / 2, 0, 0),
-  '_z': new Euler(0, Math.PI, 0)
-}
+  x: new Euler(0, Math.PI / 2, 0),
+  y: new Euler(Math.PI / -2, 0, 0),
+  z: new Euler(0, 0, 0),
+  _x: new Euler(0, Math.PI / -2, 0),
+  _y: new Euler(Math.PI / 2, 0, 0),
+  _z: new Euler(0, Math.PI, 0)
+};
 
 // const yAxisFaces = [0,5,2,4];
 // const xAxisFaces = []
-const findFace = (
-  current: Face,
-  x,
-  y,
-): Face => {
-
+const findFace = (current: Face, x, y): Face => {
   switch (current) {
     case Face.FRONT:
       if (x > 0) return Face.RIGHT;
@@ -304,9 +352,6 @@ const findFace = (
   return 0;
 };
 
-
-
-
 class Node {
   vector: Vector3;
   direction: Direction;
@@ -323,4 +368,3 @@ class Node {
     this.direction = direction;
   }
 }
-

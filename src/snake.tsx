@@ -52,10 +52,14 @@ const Snake = ({ size }: Props) => {
       case 'Q':
         // ref.current.translateX(-1).position.round();
         // setIndex(i => mapMove(i, front, -1, 0, size, Direction.Z, false));
+        //@ts-ignore trust me, i'm a programmer
+        setIndex(i => front[i].z.index);
         break;
       case 'E':
         // ref.current.translateX(-1).position.round();
         // setIndex(i => mapMove(i, front, -1, 0, size, Direction.Z_, false));
+        //@ts-ignore trust me, i'm a programmer
+        setIndex(i => front[i]._z.index);
         break;
       default:
     }
@@ -81,7 +85,12 @@ const Snake = ({ size }: Props) => {
     //   position={vec}
     // ></SnakeSegment>
     <>
-      <SnakeSegment position={front[index].vector}></SnakeSegment>
+      <SnakeSegment
+        position={(() => {
+          console.log(front[index]);
+          return front[index].vector;
+        })()}
+      ></SnakeSegment>
       {/* {front.map((node, i) => (
         <SnakeSegment position={node.vector} key={i} />
       ))} */}
@@ -92,8 +101,7 @@ const Snake = ({ size }: Props) => {
 class node {
   // position: [number, number, number];
   // x:node;
-  constructor() { }
+  constructor() {}
 }
 
 export default Snake;
-
