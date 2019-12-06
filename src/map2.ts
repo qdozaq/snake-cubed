@@ -204,7 +204,7 @@ const relativeCoordsMap = {
 
 const thing = 0;
 
-const invertDirection = (d: string) => (d[0] === '_' ? d[1] : '_' + d);
+export const invertDirection = (d: string) => (d[0] === '_' ? d[1] : '_' + d);
 
 const buildthing = (size: number, direction: Euler) => {
   const panel: Vector3[] = [];
