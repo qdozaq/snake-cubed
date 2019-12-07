@@ -21,26 +21,22 @@ export const makething = (size: number) => {
   attach(zSide, ySide, _ySide, _xSide, xSide);
   attach(_zSide, ySide, _ySide, _xSide, xSide);
 
-  return [...zSide, ...ySide, ..._ySide, ...xSide, ..._xSide, ..._zSide].map(
-    (node, i) => {
-      node.index = i;
-      return node;
-    }
-  );
+  let index = 0;
+  const cube = [
+    ...zSide,
+    ...ySide,
+    ..._ySide,
+    ...xSide,
+    ..._xSide,
+    ..._zSide
+  ].map(node => {
+    node.index = index++;
+    return node;
+  });
 
-  // const frontNodes = front.map((v) => new Node(v));
-  // const topNodes = top.map((v) => new Node(v));
-  // const backNodes = back.map((v) => new Node(v));
-  // const bottomNodes = bottom.map((v) => new Node(v));
-  // const rightNodes = right.map((v) => new Node(v));
-  // const leftNodes = left.map((v) => new Node(v));
+  console.log(cube);
 
-  //attach these somehow?
-  // front can be calculated with the current scheme
-
-  // attach(frontNodes, topNodes, Direction.Y, Direction.Z);
-
-  // return [...front, ...top, ...back, ...bottom, ...left, ...right];
+  return cube;
 };
 
 const attach = (main: Node[], ...sides: Node[][]) => {
@@ -137,8 +133,14 @@ const connectEdge = (node1: Node[], node2: Node[]) => {
   // const connection1 = invertDirection(direction1);
   // const connection2 = invertDirection(direction2);
 
-  // these should terminate at the same time
-  while (tempNode1 != undefined && tempNode2 != undefined) {
+  // while both are not undefined
+  // AND neither has gone to a node not on their side
+  while (
+    tempNode1 != undefined &&
+    tempNode2 != undefined &&
+    tempNode1.direction == direction1 &&
+    tempNode2.direction == direction2
+  ) {
     tempNode1[direction2] = tempNode2;
     tempNode2[direction1] = tempNode1;
     tempNode1 = tempNode1[endDirection];
@@ -352,7 +354,7 @@ const findFace = (current: Face, x, y): Face => {
   return 0;
 };
 
-class Node {
+export class Node {
   vector: Vector3;
   direction: Direction;
   index: number = -1;

@@ -12,23 +12,75 @@ import * as three from 'three';
 import { useFrame } from 'react-three-fiber';
 
 import SnakeSegment from './snakeSegment';
-import { mapMove, makething, Direction, invertDirection } from './map2';
+import { mapMove, makething, Direction, invertDirection, Node } from './map2';
 import { RecyclerViewBackedScrollViewComponent } from 'react-native';
 type Props = {
   size: number;
 };
 
+type Action = 'FORWARD' | 'LEFT' | 'RIGHT';
+
+type State = {
+  node: Node;
+  direction: string;
+};
+
+const forwardNode = (node: Node, direction: string) => {
+  if (node[direction] && node[direction].direction != node.direction) {
+    const newNode = node[direction];
+    const newDirection = invertDirection(node.direction);
+    return { node: newNode, direction: newDirection };
+  }
+  if (!node[direction]) {
+    console.log('uh oh');
+    console.log({ node, direction });
+    return { node: node, direction };
+  }
+  return { node: node[direction], direction };
+};
+
+const reducer = (state: State, action: Action) => {
+  const { node, direction } = state;
+  const currentSide = node.direction;
+  let newDirection: string, newNode: Node;
+  console.log(state, action);
+
+  switch (action) {
+    case 'FORWARD':
+      return forwardNode(node, direction);
+    case 'LEFT':
+      console.log('left');
+      newDirection = turn('left', direction, currentSide);
+      return { node, direction: newDirection };
+      // return forwardNode(node, newDirection);
+      break;
+    case 'RIGHT':
+      console.log('right');
+      newDirection = turn('right', direction, currentSide);
+      return { node, direction: newDirection };
+      // return forwardNode(node, newDirection);
+      break;
+    default:
+      console.log('big error');
+      console.log({ state });
+      return state;
+  }
+};
+
 let time = 0;
 const Snake = ({ size }: Props) => {
-  // const ref = useRef<three.Mesh>();
   const perimeter = size / 2;
   const front = useMemo(() => makething(size), [size]);
-  // const [pos, setPos] = useState({ x: 0, y: 0, z: perimeter });
-  const [vec, setVec] = useState(new three.Vector3(0, 0, perimeter));
   const [pos, setPos] = useState({
     index: 0,
     direction: Direction.Y as string
   });
+
+  const [state, dispatch] = useReducer(
+    reducer,
+    { node: null, direction: 'y' },
+    state => ({ ...state, node: front[0] })
+  );
 
   const forward = () => {
     setPos(({ index, direction }) => {
@@ -53,7 +105,7 @@ const Snake = ({ size }: Props) => {
     time += delta;
 
     if (time > 0.5) {
-      forward();
+      dispatch('FORWARD');
       time = 0;
     }
     // console.log(delta);
@@ -84,27 +136,11 @@ const Snake = ({ size }: Props) => {
         break;
       case 'D':
       case 'ARROWRIGHT':
-        //@ts-ignore trust me, i'm a programmer
-        // setIndex(i => front[i].x.index);
-        console.log('right');
-        setPos(({ index, direction }) => {
-          const currentSide = front[index].direction;
-          const newDirection = turn('right', direction, currentSide);
-          console.log({ index, direction, newDirection });
-          return { index, direction: newDirection };
-        });
+        dispatch('RIGHT');
         break;
       case 'A':
       case 'ARROWLEFT':
-        //@ts-ignore trust me, i'm a programmer
-        // setIndex(i => front[i]._x.index);
-        console.log('left');
-        setPos(({ index, direction }) => {
-          const currentSide = front[index].direction;
-          const newDirection = turn('left', direction, currentSide);
-          console.log({ index, direction, newDirection });
-          return { index, direction: newDirection };
-        });
+        dispatch('LEFT');
         break;
       case 'Q':
         // ref.current.translateX(-1).position.round();
@@ -142,19 +178,13 @@ const Snake = ({ size }: Props) => {
     //   position={vec}
     // ></SnakeSegment>
     <>
-      <SnakeSegment position={front[pos.index].vector}></SnakeSegment>
+      <SnakeSegment position={state.node.vector}></SnakeSegment>
       {/* {front.map((node, i) => (
         <SnakeSegment position={node.vector} key={i} />
       ))} */}
     </>
   );
 };
-
-class node {
-  // position: [number, number, number];
-  // x:node;
-  constructor() {}
-}
 
 export default Snake;
 
