@@ -1,9 +1,14 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Canvas } from 'react-three-fiber';
 import styled from 'styled-components';
-import { inspect } from 'util';
 
-import Cube from './cube';
+import Cube from './Cube';
+import Rotation from './Rotation';
+import Controller from './Controller';
+import SnakeSegment from './snakeSegment';
+import Snake from './snake';
+
+import { buildCubeMap } from './map';
 
 const Container = styled.div`
   display: inline-flex;
@@ -11,28 +16,14 @@ const Container = styled.div`
   width: 100vw;
 `;
 
-const Stats = styled.div`
-  top: 0;
-  width: auto;
-  min-width: 20em;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  overflow: scroll;
-  word-wrap: break-all;
-  /* line-height: 0.25rem; */
-  color: grey;
-`;
-
 const SIZE = 5;
+const SPEED = 2;
+
+const cubeMap = buildCubeMap(SIZE);
+
 const App = () => {
-  const [stats, setStats] = useState('somethinsomethingg');
   return (
     <Container>
-      {/* <Stats>
-        {stats.split(',').map(line => (
-          <p>{line}</p>
-        ))}
-      </Stats> */}
       <Canvas camera={{ position: [0, 0, SIZE * 2.5], far: 50 }}>
         <ambientLight intensity={1} />
         <spotLight
@@ -44,7 +35,14 @@ const App = () => {
           shadow-mapSize-height={2048}
           castShadow
         />
-        <Cube size={SIZE} />
+        <Rotation>
+          <Cube size={SIZE} />
+          <Controller map={cubeMap} speed={SPEED}>
+            {state => {
+              return <Snake body={state.snake}></Snake>;
+            }}
+          </Controller>
+        </Rotation>
       </Canvas>
     </Container>
   );
