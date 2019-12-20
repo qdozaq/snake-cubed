@@ -6,7 +6,7 @@ import Cube from './Cube';
 import Rotation from './Rotation';
 import Controller from './Controller';
 import SnakeSegment from './snakeSegment';
-import Snake from './snake';
+import Snake from './Snake';
 
 import { buildCubeMap } from './map';
 
