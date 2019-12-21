@@ -10,12 +10,16 @@ import { useFrame } from 'react-three-fiber';
 import { PositionNode, invertDirection, Direction } from './PositionNode';
 import { CubeMap } from './map';
 
-type Action = 'FORWARD' | 'LEFT' | 'RIGHT' | 'ADD';
+type ForwardAction = { type: 'FORWARD'; payload: CubeMap };
+type LeftAction = { type: 'LEFT' };
+type RightAction = { type: 'RIGHT' };
+type Action = ForwardAction | LeftAction | RightAction;
 
 export type State = {
-  head: PositionNode;
   direction: string;
   snake: PositionNode[];
+  emptySpaces: number[];
+  food: number;
 };
 
 type Props = {
@@ -27,19 +31,30 @@ type Props = {
 let time = 0;
 
 export default ({ map, speed, children }: Props) => {
-  const [state, dispatch] = useReducer<Reducer<State, Action>>(reducer, {
-    head: map[0],
-    direction: 'y',
-    snake: [map[0]]
-  });
-
-  // const [snake, setSnake] = useState<PositionNode[]>([]);
+  const [state, dispatch] = useReducer<Reducer<State, Action>, any>(
+    reducer,
+    {
+      direction: 'y',
+      snake: [map[0]],
+      emptySpaces: new Array(map.length - 1).fill(1).map((_, i) => i + 1),
+      food: 0
+    },
+    (state: State) => {
+      return {
+        ...state,
+        food:
+          state.emptySpaces[
+            Math.floor(Math.random() * state.emptySpaces.length)
+          ]
+      };
+    }
+  );
 
   useFrame((_, delta) => {
     time += delta;
 
     if (speed > 0 && time > 1 / speed) {
-      dispatch('FORWARD');
+      dispatch({ type: 'FORWARD', payload: map });
       time = 0;
     }
   });
@@ -48,14 +63,11 @@ export default ({ map, speed, children }: Props) => {
     switch (e.key.toUpperCase()) {
       case 'D':
       case 'ARROWRIGHT':
-        dispatch('RIGHT');
+        dispatch({ type: 'RIGHT' });
         break;
       case 'A':
       case 'ARROWLEFT':
-        dispatch('LEFT');
-        break;
-      case ' ':
-        dispatch('ADD');
+        dispatch({ type: 'LEFT' });
         break;
       default:
     }
@@ -71,7 +83,10 @@ export default ({ map, speed, children }: Props) => {
   return <>{children(state)}</>;
 };
 
-const forwardNode = (head: PositionNode, direction: string) => {
+const forwardNode = (
+  head: PositionNode,
+  direction: string
+): [PositionNode, string] => {
   // check if going over edge and change direction accordingly
   if (head[direction] && head[direction].direction !== head.direction) {
     const newNode = head[direction];
@@ -89,27 +104,44 @@ const forwardNode = (head: PositionNode, direction: string) => {
 };
 
 const reducer = (state: State, action: Action) => {
-  const { head, direction, snake } = state;
+  const { direction, snake, food, emptySpaces } = state;
+  const head = snake[0];
   const currentSide = head.direction;
   let newDirection: string;
 
-  switch (action) {
+  switch (action.type) {
     case 'FORWARD':
       const [newHead, newDir] = forwardNode(head, direction);
-      const newSnake = [newHead, ...snake.slice(0, -1)];
-      return { head: newHead, direction: newDir, snake: newSnake };
+      const map = action.payload;
+      if (newHead.index === map[food].index) {
+        console.log(emptySpaces);
+        const newSnake = [newHead, ...snake];
+        const newEmptySpaces = emptySpaces.filter(val => val !== newHead.index);
+        const newFood =
+          newEmptySpaces[Math.floor(Math.random() * newEmptySpaces.length)];
+        console.log({ newEmptySpaces, newFood });
+        return {
+          direction: newDir,
+          snake: newSnake,
+          food: newFood,
+          emptySpaces: newEmptySpaces
+        };
+      } else {
+        const newSnake = [newHead, ...snake.slice(0, -1)];
+        return { ...state, direction: newDir, snake: newSnake };
+      }
     case 'LEFT':
       console.log('left');
       newDirection = turn('left', direction, currentSide);
-      return { head, snake, direction: newDirection };
+      return { ...state, direction: newDirection };
     case 'RIGHT':
       console.log('right');
       newDirection = turn('right', direction, currentSide);
-      return { head, snake, direction: newDirection };
-    case 'ADD':
-      const [newHead2, newDir2] = forwardNode(head, direction);
-      const newSnake2 = [newHead2, ...snake];
-      return { head: newHead2, direction: newDir2, snake: newSnake2 };
+      return { ...state, direction: newDirection };
+    // case 'ADD':
+    //   const [newHead2, newDir2] = forwardNode(head, direction);
+    //   const newSnake2 = [newHead2, ...snake];
+    //   return { ...state, head: newHead2, direction: newDir2, snake: newSnake2 };
     default:
       console.log('big error');
       console.log({ state });

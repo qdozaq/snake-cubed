@@ -5,8 +5,8 @@ import styled from 'styled-components';
 import Cube from './Cube';
 import Rotation from './Rotation';
 import Controller from './Controller';
-import SnakeSegment from './snakeSegment';
 import Snake from './Snake';
+import Food from './Food';
 
 import { buildCubeMap } from './map';
 
@@ -16,7 +16,7 @@ const Container = styled.div`
   width: 100vw;
 `;
 
-const SIZE = 5;
+const SIZE = 3;
 const SPEED = 2;
 
 const cubeMap = buildCubeMap(SIZE);
@@ -39,7 +39,12 @@ const App = () => {
           <Cube size={SIZE} />
           <Controller map={cubeMap} speed={SPEED}>
             {state => {
-              return <Snake body={state.snake}></Snake>;
+              return (
+                <>
+                  <Food position={cubeMap[state.food].vector} />
+                  <Snake body={state.snake}></Snake>
+                </>
+              );
             }}
           </Controller>
         </Rotation>
