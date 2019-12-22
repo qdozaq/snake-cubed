@@ -17,8 +17,8 @@ const Container = styled.div`
   width: 100vw;
 `;
 
-const SIZE = 5;
-const SPEED = 10;
+const SIZE = 3;
+const SPEED = 2;
 
 const cubeMap = buildCubeMap(SIZE);
 
@@ -66,6 +66,10 @@ const App = () => {
           </Controller>
         </Rotation>
       </Canvas>
+      <Buttons>
+        <button onClick={left}>left</button>
+        <button onClick={right}>right</button>
+      </Buttons>
     </Container>
   );
 };
@@ -82,3 +86,23 @@ const YouLose = styled.div`
   text-align: center;
   color: pink;
 `;
+
+const Buttons = styled.div`
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  width: 100vw;
+  bottom: 2rem;
+  button {
+    width: 100%;
+    height: 2rem;
+  }
+`;
+
+const left = () => {
+  window.dispatchEvent(new KeyboardEvent('keydown', { key: 'a' }));
+};
+
+const right = () => {
+  window.dispatchEvent(new KeyboardEvent('keydown', { key: 'd' }));
+};
