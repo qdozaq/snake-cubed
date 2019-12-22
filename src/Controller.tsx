@@ -3,14 +3,20 @@ import React, {
   useEffect,
   ReactNode,
   Reducer,
-  useState
+  useState,
+  Dispatch,
+  SetStateAction
 } from 'react';
 import { useFrame } from 'react-three-fiber';
 
 import { PositionNode, invertDirection, Direction } from './PositionNode';
 import { CubeMap } from './map';
+import GameStates from './GameStates';
 
-type ForwardAction = { type: 'FORWARD'; payload: CubeMap };
+type ForwardAction = {
+  type: 'FORWARD';
+  payload: { map: CubeMap; setGameState: Dispatch<SetStateAction<GameStates>> };
+};
 type LeftAction = { type: 'LEFT' };
 type RightAction = { type: 'RIGHT' };
 type Action = ForwardAction | LeftAction | RightAction;
@@ -25,12 +31,14 @@ export type State = {
 type Props = {
   map: CubeMap;
   speed: number;
+  gameState: GameStates;
+  setGameState: Dispatch<SetStateAction<GameStates>>;
   children: (state: State) => ReactNode;
 };
 
 let time = 0;
 
-export default ({ map, speed, children }: Props) => {
+export default ({ map, speed, children, gameState, setGameState }: Props) => {
   const [state, dispatch] = useReducer<Reducer<State, Action>, any>(
     reducer,
     {
@@ -50,12 +58,27 @@ export default ({ map, speed, children }: Props) => {
     }
   );
 
+  const [snakeVisible, setSnakeVisible] = useState(true);
+
   useFrame((_, delta) => {
     time += delta;
 
-    if (speed > 0 && time > 1 / speed) {
-      dispatch({ type: 'FORWARD', payload: map });
-      time = 0;
+    switch (gameState) {
+      case GameStates.PLAYING:
+        if (speed > 0 && time > 1 / speed) {
+          dispatch({ type: 'FORWARD', payload: { map, setGameState } });
+          time = 0;
+        }
+        break;
+      case GameStates.LOSE:
+        if (time > 0.5) {
+          setSnakeVisible(val => !val);
+          time = 0;
+        }
+        break;
+      case GameStates.WIN:
+        break;
+      default:
     }
   });
 
@@ -80,7 +103,11 @@ export default ({ map, speed, children }: Props) => {
     };
   }, []);
 
-  return <>{children(state)}</>;
+  if (snakeVisible) {
+    return <>{children(state)}</>;
+  } else {
+    return <>{children({ ...state, snake: [] })}</>;
+  }
 };
 
 const forwardNode = (
@@ -112,7 +139,7 @@ const reducer = (state: State, action: Action) => {
   switch (action.type) {
     case 'FORWARD':
       const [newHead, newDir] = forwardNode(head, direction);
-      const map = action.payload;
+      const map = action.payload.map;
       if (newHead.index === map[food].index) {
         const newSnake = [newHead, ...snake];
         const newEmptySpaces = emptySpaces.filter(val => val !== newHead.index);
@@ -124,10 +151,17 @@ const reducer = (state: State, action: Action) => {
           food: newFood,
           emptySpaces: newEmptySpaces
         };
-      } else {
-        const newSnake = [newHead, ...snake.slice(0, -1)];
-        return { ...state, direction: newDir, snake: newSnake };
       }
+      const newSnake = [newHead, ...snake.slice(0, -1)];
+
+      if (
+        newSnake.some((segment, i) => i > 0 && segment.index === newHead.index)
+      ) {
+        action.payload.setGameState(GameStates.LOSE);
+        return state;
+      }
+      return { ...state, direction: newDir, snake: newSnake };
+
     case 'LEFT':
       console.log('left');
       newDirection = turn('left', direction, currentSide);
@@ -136,10 +170,6 @@ const reducer = (state: State, action: Action) => {
       console.log('right');
       newDirection = turn('right', direction, currentSide);
       return { ...state, direction: newDirection };
-    // case 'ADD':
-    //   const [newHead2, newDir2] = forwardNode(head, direction);
-    //   const newSnake2 = [newHead2, ...snake];
-    //   return { ...state, head: newHead2, direction: newDir2, snake: newSnake2 };
     default:
       console.log('big error');
       console.log({ state });

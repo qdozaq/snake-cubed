@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Canvas } from 'react-three-fiber';
 import styled from 'styled-components';
 
@@ -9,6 +9,7 @@ import Snake from './Snake';
 import Food from './Food';
 
 import { buildCubeMap } from './map';
+import GameStates from './GameStates';
 
 const Container = styled.div`
   display: inline-flex;
@@ -16,14 +17,24 @@ const Container = styled.div`
   width: 100vw;
 `;
 
-const SIZE = 3;
-const SPEED = 2;
+const SIZE = 5;
+const SPEED = 10;
 
 const cubeMap = buildCubeMap(SIZE);
 
 const App = () => {
+  const [gameState, setGameState] = useState<GameStates>(GameStates.PLAYING);
   return (
     <Container>
+      {gameState == GameStates.LOSE && (
+        <YouLose>
+          <h1>
+            YOU
+            <br />
+            LOSE
+          </h1>
+        </YouLose>
+      )}
       <Canvas camera={{ position: [0, 0, SIZE * 2.5], far: 50 }}>
         <ambientLight intensity={1} />
         <spotLight
@@ -38,7 +49,12 @@ const App = () => {
         <Rotation>
           <Cube size={SIZE} />
           {/* <axesHelper args={[SIZE * 2]}></axesHelper> */}
-          <Controller map={cubeMap} speed={SPEED}>
+          <Controller
+            map={cubeMap}
+            speed={SPEED}
+            gameState={gameState}
+            setGameState={setGameState}
+          >
             {state => {
               return (
                 <>
@@ -54,3 +70,15 @@ const App = () => {
   );
 };
 export default App;
+
+const YouLose = styled.div`
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100vw;
+  height: 100vh;
+  font-size: 10vw;
+  text-align: center;
+  color: pink;
+`;
