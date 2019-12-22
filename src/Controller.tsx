@@ -114,12 +114,10 @@ const reducer = (state: State, action: Action) => {
       const [newHead, newDir] = forwardNode(head, direction);
       const map = action.payload;
       if (newHead.index === map[food].index) {
-        console.log(emptySpaces);
         const newSnake = [newHead, ...snake];
         const newEmptySpaces = emptySpaces.filter(val => val !== newHead.index);
         const newFood =
           newEmptySpaces[Math.floor(Math.random() * newEmptySpaces.length)];
-        console.log({ newEmptySpaces, newFood });
         return {
           direction: newDir,
           snake: newSnake,

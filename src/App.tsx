@@ -37,6 +37,7 @@ const App = () => {
         />
         <Rotation>
           <Cube size={SIZE} />
+          {/* <axesHelper args={[SIZE * 2]}></axesHelper> */}
           <Controller map={cubeMap} speed={SPEED}>
             {state => {
               return (
