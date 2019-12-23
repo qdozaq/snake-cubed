@@ -1,6 +1,25 @@
-import React from 'react';
+import React, { useRef } from 'react';
 // import { Canvas } from 'react-three-fiber';
 // import styled from 'styled-components';
+import { Canvas, useFrame } from 'react-three-fiber';
+import { Mesh } from 'three';
+
+function Thing() {
+  const ref = useRef<Mesh>();
+  //@ts-ignore
+  useFrame(() => (ref.current.rotation.x = ref.current.rotation.y += 0.01));
+  return (
+    <mesh
+      ref={ref}
+      onClick={e => console.log('click')}
+      onPointerOver={e => console.log('hover')}
+      onPointerOut={e => console.log('unhover')}
+    >
+      <boxBufferGeometry attach="geometry" args={[1, 1, 1]} />
+      <meshNormalMaterial attach="material" />
+    </mesh>
+  );
+}
 
 // import Cube from './Cube';
 // import Rotation from './Rotation';
@@ -25,7 +44,12 @@ import React from 'react';
 const App = () => {
   // const [gameState, setGameState] = useState<GameStates>(GameStates.PLAYING);
   return (
-    <h1>why</h1>
+    <>
+      <h1>why</h1>
+      <Canvas>
+        <Thing />
+      </Canvas>
+    </>
     // <Container>
     // {/* {gameState == GameStates.LOSE && (
     //   <YouLose>
