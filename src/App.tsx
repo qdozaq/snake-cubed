@@ -3,7 +3,7 @@ import { Canvas } from 'react-three-fiber';
 // import styled from 'styled-components';
 
 import Cube from './Cube';
-import Rotation from './Rotation';
+// import Rotation from './Rotation';
 // import Controller from './Controller';
 // import Snake from './Snake';
 // import Food from './Food';
@@ -46,9 +46,9 @@ const App = () => {
           shadow-mapSize-height={2048}
           castShadow
         /> */}
-      <Rotation>
-        <Cube size={SIZE} />
-      </Rotation>
+      {/* <Rotation> */}
+      <Cube size={SIZE} />
+      {/* </Rotation> */}
     </Canvas>
     // {/* <Buttons>
     //   <button onClick={left}>left</button>
