@@ -4,12 +4,12 @@ import styled from 'styled-components';
 
 import Cube from './Cube';
 import Rotation from './Rotation';
-import Controller from './Controller';
-import Snake from './Snake';
-import Food from './Food';
+// import Controller from './Controller';
+// import Snake from './Snake';
+// import Food from './Food';
 
-import { buildCubeMap } from './map';
-import GameStates from './GameStates';
+// import { buildCubeMap } from './map';
+// import GameStates from './GameStates';
 
 const Container = styled.div`
   display: inline-flex;
@@ -18,15 +18,15 @@ const Container = styled.div`
 `;
 
 const SIZE = 3;
-const SPEED = 2;
+// const SPEED = 2;
 
-const cubeMap = buildCubeMap(SIZE);
+// const cubeMap = buildCubeMap(SIZE);
 
 const App = () => {
-  const [gameState, setGameState] = useState<GameStates>(GameStates.PLAYING);
+  // const [gameState, setGameState] = useState<GameStates>(GameStates.PLAYING);
   return (
     <Container>
-      {gameState == GameStates.LOSE && (
+      {/* {gameState == GameStates.LOSE && (
         <YouLose>
           <h1>
             YOU
@@ -34,7 +34,7 @@ const App = () => {
             LOSE
           </h1>
         </YouLose>
-      )}
+      )} */}
       <Canvas camera={{ position: [0, 0, SIZE * 2.5], far: 50 }}>
         <ambientLight intensity={1} />
         <spotLight
@@ -49,7 +49,7 @@ const App = () => {
         <Rotation>
           <Cube size={SIZE} />
           {/* <axesHelper args={[SIZE * 2]}></axesHelper> */}
-          <Controller
+          {/* <Controller
             map={cubeMap}
             speed={SPEED}
             gameState={gameState}
@@ -63,46 +63,46 @@ const App = () => {
                 </>
               );
             }}
-          </Controller>
+          </Controller> */}
         </Rotation>
       </Canvas>
-      <Buttons>
+      {/* <Buttons>
         <button onClick={left}>left</button>
         <button onClick={right}>right</button>
-      </Buttons>
+      </Buttons> */}
     </Container>
   );
 };
 export default App;
 
-const YouLose = styled.div`
-  position: absolute;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100vw;
-  height: 100vh;
-  font-size: 10vw;
-  text-align: center;
-  color: pink;
-`;
+// const YouLose = styled.div`
+//   position: absolute;
+//   display: flex;
+//   justify-content: center;
+//   align-items: center;
+//   width: 100vw;
+//   height: 100vh;
+//   font-size: 10vw;
+//   text-align: center;
+//   color: pink;
+// `;
 
-const Buttons = styled.div`
-  position: absolute;
-  display: flex;
-  justify-content: center;
-  width: 100vw;
-  bottom: 2rem;
-  button {
-    width: 100%;
-    height: 2rem;
-  }
-`;
+// const Buttons = styled.div`
+//   position: absolute;
+//   display: flex;
+//   justify-content: center;
+//   width: 100vw;
+//   bottom: 2rem;
+//   button {
+//     width: 100%;
+//     height: 2rem;
+//   }
+// `;
 
-const left = () => {
-  window.dispatchEvent(new KeyboardEvent('keydown', { key: 'a' }));
-};
+// const left = () => {
+//   window.dispatchEvent(new KeyboardEvent('keydown', { key: 'a' }));
+// };
 
-const right = () => {
-  window.dispatchEvent(new KeyboardEvent('keydown', { key: 'd' }));
-};
+// const right = () => {
+//   window.dispatchEvent(new KeyboardEvent('keydown', { key: 'd' }));
+// };
