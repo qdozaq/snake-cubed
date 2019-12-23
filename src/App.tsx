@@ -1,8 +1,8 @@
 import React from 'react';
-import { Canvas } from 'react-three-fiber';
+// import { Canvas } from 'react-three-fiber';
 // import styled from 'styled-components';
 
-import Cube from './Cube';
+// import Cube from './Cube';
 // import Rotation from './Rotation';
 // import Controller from './Controller';
 // import Snake from './Snake';
@@ -17,7 +17,7 @@ import Cube from './Cube';
 //   width: 100vw;
 // `;
 
-const SIZE = 3;
+// const SIZE = 3;
 // const SPEED = 2;
 
 // const cubeMap = buildCubeMap(SIZE);
@@ -25,6 +25,7 @@ const SIZE = 3;
 const App = () => {
   // const [gameState, setGameState] = useState<GameStates>(GameStates.PLAYING);
   return (
+    <h1>why</h1>
     // <Container>
     // {/* {gameState == GameStates.LOSE && (
     //   <YouLose>
@@ -35,21 +36,21 @@ const App = () => {
     //     </h1>
     //   </YouLose>
     // )} */}
-    <Canvas camera={{ position: [0, 0, SIZE * 2.5], far: 50 }}>
-      {/* <ambientLight intensity={1} />
-        <spotLight
-          intensity={2}
-          position={[20, 10, 10]}
-          angle={0.2}
-          penumbra={1}
-          shadow-mapSize-width={2048}
-          shadow-mapSize-height={2048}
-          castShadow
-        /> */}
-      {/* <Rotation> */}
-      <Cube size={SIZE} />
-      {/* </Rotation> */}
-    </Canvas>
+    // <Canvas camera={{ position: [0, 0, SIZE * 2.5], far: 50 }}>
+    //   {/* <ambientLight intensity={1} />
+    //     <spotLight
+    //       intensity={2}
+    //       position={[20, 10, 10]}
+    //       angle={0.2}
+    //       penumbra={1}
+    //       shadow-mapSize-width={2048}
+    //       shadow-mapSize-height={2048}
+    //       castShadow
+    //     /> */}
+    //   {/* <Rotation> */}
+    //   <Cube size={SIZE} />
+    //   {/* </Rotation> */}
+    // </Canvas>
     // {/* <Buttons>
     //   <button onClick={left}>left</button>
     //   <button onClick={right}>right</button>
