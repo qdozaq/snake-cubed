@@ -142,7 +142,11 @@ const reducer = (state: State, action: Action) => {
       const map = action.payload.map;
       if (newHead.index === map[food].index) {
         const newSnake = [newHead, ...snake];
-        const newEmptySpaces = emptySpaces.filter(val => val !== newHead.index);
+        // need to filter out from all the indexs not the ones already in empty spaces
+        const newEmptySpaces = map.reduce((agg: number[], node) => {
+          if (!newSnake.some(s => s.index === node.index)) agg.push(node.index);
+          return agg;
+        }, []);
         const newFood =
           newEmptySpaces[Math.floor(Math.random() * newEmptySpaces.length)];
         return {
