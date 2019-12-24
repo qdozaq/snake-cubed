@@ -121,9 +121,10 @@ const buildSide = (size: number, direction: Direction) => {
       // shift to center
       vec.add(new Vector3(shift, shift, 0));
       // rotate to direction
-      vec.applyEuler(directionToEularMap[direction]);
+      const euler = directionToEularMap[direction];
+      vec.applyEuler(euler);
 
-      panel.push(new PositionNode(vec, direction));
+      panel.push(new PositionNode(vec, direction, euler));
     }
   }
 

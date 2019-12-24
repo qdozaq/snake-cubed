@@ -1,4 +1,4 @@
-import { Vector3 } from 'three';
+import { Vector3, Euler } from 'three';
 
 export enum Direction {
   X = 'x',
@@ -14,7 +14,9 @@ export const invertDirection = (d: string) => (d[0] === '_' ? d[1] : '_' + d);
 
 export class PositionNode {
   vector: Vector3;
+  // Should probably consolidate these at some point
   direction: Direction;
+  euler: Euler;
   index: number = -1;
   x?: PositionNode;
   y?: PositionNode;
@@ -23,8 +25,9 @@ export class PositionNode {
   _y?: PositionNode;
   _z?: PositionNode;
 
-  constructor(vector: Vector3, direction: Direction) {
+  constructor(vector: Vector3, direction: Direction, eular: Euler) {
     this.vector = vector;
     this.direction = direction;
+    this.euler = eular;
   }
 }

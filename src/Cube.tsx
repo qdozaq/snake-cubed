@@ -8,7 +8,7 @@ const Cube = ({ size }: Props) => {
   console.log('cube');
   return (
     <group>
-      <mesh>
+      <mesh castShadow={true}>
         <boxBufferGeometry
           attach="geometry"
           args={[size, size, size, size, size, size]}
@@ -25,7 +25,7 @@ const Cube = ({ size }: Props) => {
           wireframe={true}
         />
       </mesh>
-      <mesh>
+      {/* <mesh castShadow={true}>
         <boxBufferGeometry
           attach="geometry"
           args={[size - 1, size - 1, size - 1]}
@@ -40,7 +40,7 @@ const Cube = ({ size }: Props) => {
           transparent={true}
           opacity={0.5}
         />
-      </mesh>
+      </mesh> */}
     </group>
   );
 };

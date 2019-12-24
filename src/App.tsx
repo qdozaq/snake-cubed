@@ -10,11 +10,15 @@ import Food from './Food';
 
 import { buildCubeMap } from './map';
 import GameStates from './GameStates';
+import { DoubleSide } from 'three';
+
+const PINK = '#ff80ae';
 
 const Container = styled.div`
   display: inline-flex;
   height: 100vh;
   width: 100vw;
+  background-color: ${PINK};
 `;
 
 const SIZE = 3;
@@ -35,17 +39,18 @@ const App = () => {
           </h1>
         </YouLose>
       )}
-      <Canvas camera={{ position: [0, 0, SIZE * 2.5], far: 50 }}>
-        <ambientLight intensity={1} />
+      <Canvas camera={{ position: [0, 0, SIZE * 2.5], far: 1000 }} shadowMap>
+        <ambientLight intensity={1.5} />
         <spotLight
-          intensity={2}
-          position={[20, 10, 10]}
-          angle={0.2}
+          intensity={0.5}
+          position={[12, 50, 12]}
+          angle={1}
           penumbra={1}
           shadow-mapSize-width={2048}
           shadow-mapSize-height={2048}
           castShadow
         />
+        {/* <Plane size={SIZE} /> */}
         <Rotation>
           <Cube size={SIZE} />
           {/* <axesHelper args={[SIZE * 2]}></axesHelper> */}
@@ -66,14 +71,30 @@ const App = () => {
           </Controller>
         </Rotation>
       </Canvas>
-      <Buttons>
+      {/* <Buttons>
         <button onClick={left}>left</button>
         <button onClick={right}>right</button>
-      </Buttons>
+      </Buttons> */}
     </Container>
   );
 };
 export default App;
+
+const Plane = ({ size }: { size: number }) => (
+  <mesh
+    rotation={[-Math.PI / 2, 0, 0]}
+    position={[0, -size * 1.5, 5]}
+    receiveShadow={true}
+  >
+    <planeBufferGeometry attach="geometry" args={[20, 20]} />
+    <meshStandardMaterial
+      color={PINK}
+      attach="material"
+      side={DoubleSide}
+      roughness={0}
+    />
+  </mesh>
+);
 
 const YouLose = styled.div`
   position: absolute;
