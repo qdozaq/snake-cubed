@@ -57,7 +57,6 @@ const connectEdge = (node1: PositionNode[], node2: PositionNode[]) => {
   r1 = r1.concat(r1.map(invertDirection));
   r2 = r2.concat(r2.map(invertDirection));
 
-  console.log(r1, r2);
   // find the first value that they have shared
   let i = 0;
   while (!r1.includes(r2[i])) i++;

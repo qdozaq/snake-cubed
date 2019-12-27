@@ -25,13 +25,18 @@ type Props = {
   body: PositionNode[];
 };
 
-const colorMemo = { 0: startColor };
+const colorMemo = {};
 
 export default function Snake({ body }: Props) {
   return (
     <>
       {body.map((node, i) => (
-        <SnakeSegment position={node.vector} rotation={node.euler} index={i} />
+        <SnakeSegment
+          position={node.vector}
+          rotation={node.euler}
+          index={i}
+          key={i}
+        />
       ))}
     </>
   );

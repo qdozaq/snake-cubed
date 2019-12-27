@@ -5,7 +5,6 @@ type Props = {
 };
 
 const Cube = ({ size }: Props) => {
-  console.log('cube');
   return (
     <group>
       <mesh castShadow={true}>
