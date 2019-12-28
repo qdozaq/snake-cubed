@@ -54,7 +54,7 @@ export const SnakeSegment = ({ index, ...props }: SnakeSegmentProps) => {
   if (!colorMemo[index]) colorMemo[index] = randomColor();
 
   return (
-    <mesh {...props} castShadow={true} geometry={smooth}>
+    <mesh {...props} geometry={smooth}>
       {/* <boxBufferGeometry
         attach="geometry"
         args={[segmentSize, segmentSize, 0.5]}

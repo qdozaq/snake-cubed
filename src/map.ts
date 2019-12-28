@@ -120,7 +120,7 @@ const buildSide = (size: number, direction: Direction) => {
       // shift to center
       vec.add(new Vector3(shift, shift, 0));
       // rotate to direction
-      const euler = directionToEularMap[direction];
+      const euler = directionToEulerMap[direction];
       vec.applyEuler(euler);
 
       panel.push(new PositionNode(vec, direction, euler));
@@ -162,7 +162,7 @@ const relativeCoordsMap = {
   _z: ['_x', 'y']
 };
 
-const directionToEularMap = {
+export const directionToEulerMap = {
   x: new Euler(0, Math.PI / 2, 0),
   y: new Euler(Math.PI / -2, 0, 0),
   z: new Euler(0, 0, 0),

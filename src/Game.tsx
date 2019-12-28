@@ -88,7 +88,7 @@ export default Game;
 //   >
 //     <planeBufferGeometry attach="geometry" args={[20, 20]} />
 //     <meshStandardMaterial
-//       color={PINK}
+//       color='pink'
 //       attach="material"
 //       side={DoubleSide}
 //       roughness={0}
