@@ -1,5 +1,5 @@
-import React, { useState, useContext, createContext } from 'react';
-import { Canvas } from 'react-three-fiber';
+import React, { useState, useContext } from 'react';
+import { Canvas, WebCanvasProps } from 'react-three-fiber';
 import styled, { ThemeContext } from 'styled-components';
 
 import Cube from './Cube';
@@ -24,10 +24,12 @@ const SPEED = 2;
 
 const cubeMap = buildCubeMap(SIZE);
 
+
 const Game = () => {
   const theme = useContext(ThemeContext);
   const [gameState, setGameState] = useState<GameStates>(GameStates.PLAYING);
   return (
+
     <Container>
       {gameState == GameStates.LOSE && (
         <YouLose>
@@ -38,7 +40,7 @@ const Game = () => {
           </h1>
         </YouLose>
       )}
-      <Canvas camera={{ position: [0, 0, SIZE * 2.5], far: 1000 }} shadowMap>
+      <CanvasWithProviders camera={{ position: [0, 0, SIZE * 2.5], far: 1000 }} shadowMap>
         <ambientLight intensity={1.5} />
         <spotLight
           intensity={0.5}
@@ -49,7 +51,6 @@ const Game = () => {
           shadow-mapSize-height={2048}
           castShadow
         />
-        {/* <Plane size={SIZE} /> */}
         <Rotation>
           <Cube size={SIZE} />
           {/* <axesHelper args={[SIZE * 2]}></axesHelper> */}
@@ -69,7 +70,7 @@ const Game = () => {
             }}
           </Controller>
         </Rotation>
-      </Canvas>
+      </CanvasWithProviders>
       {/* <Buttons>
         <button onClick={left}>left</button>
         <button onClick={right}>right</button>
@@ -126,3 +127,17 @@ const left = () => {
 const right = () => {
   window.dispatchEvent(new KeyboardEvent('keydown', { key: 'd' }));
 };
+
+
+// Work around for react-three-fiber canvas reconciler mangling providers
+function CanvasWithProviders({ children, ...props }: WebCanvasProps) {
+  const theme = useContext(ThemeContext);
+  return (
+    //@ts-ignore props mismatch
+    <Canvas {...props}>
+      <ThemeContext.Provider value={theme}>
+        {children}
+      </ThemeContext.Provider>
+    </Canvas>
+  )
+}

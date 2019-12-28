@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Vector3, Euler, BoxBufferGeometry, Color } from 'three';
 import { SubdivisionModifier } from 'three/examples/jsm/modifiers/SubdivisionModifier';
+import { ThemeContext } from 'styled-components';
 
 import { PositionNode } from './PositionNode';
 const modifier = new SubdivisionModifier(1);
@@ -49,6 +50,7 @@ type SnakeSegmentProps = {
 };
 
 export const SnakeSegment = ({ index, ...props }: SnakeSegmentProps) => {
+  const theme = useContext(ThemeContext);
   if (!colorMemo[index]) colorMemo[index] = randomColor();
 
   return (
@@ -59,7 +61,7 @@ export const SnakeSegment = ({ index, ...props }: SnakeSegmentProps) => {
       /> */}
       <meshPhysicalMaterial
         attach="material"
-        color={colorMemo[index]}
+        color={theme.snake}
         roughness={1}
       />
     </mesh>

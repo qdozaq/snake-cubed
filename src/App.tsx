@@ -1,5 +1,5 @@
 import React from 'react';
-import { ThemeProvider } from 'styled-components';
+import { ThemeProvider, ThemeContext } from 'styled-components';
 
 import Game from './Game';
 import themes from './themes';
@@ -11,4 +11,5 @@ const App = () => {
     </ThemeProvider>
   );
 };
+
 export default App;
