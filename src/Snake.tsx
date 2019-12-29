@@ -1,5 +1,5 @@
-import React, { useContext } from 'react';
-import { Vector3, Euler, BoxBufferGeometry, Color } from 'three';
+import React, { useContext, useMemo } from 'react';
+import { Vector3, Euler, BoxBufferGeometry, Color, DoubleSide } from 'three';
 import { SubdivisionModifier } from 'three/examples/jsm/modifiers/SubdivisionModifier';
 import { ThemeContext } from 'styled-components';
 
@@ -18,15 +18,9 @@ const cubeGeometry = new BoxBufferGeometry(
 // const smooth = cubeGeometry;
 const smooth = modifier.modify(cubeGeometry);
 
-const randomColor = () => '#' + ((Math.random() * 0xffffff) << 0).toString(16);
-
-const startColor = new Color('#ab3');
-
 type Props = {
   body: PositionNode[];
 };
-
-const colorMemo = {};
 
 export default function Snake({ body }: Props) {
   return (
@@ -51,18 +45,19 @@ type SnakeSegmentProps = {
 
 export const SnakeSegment = ({ index, ...props }: SnakeSegmentProps) => {
   const theme = useContext(ThemeContext);
-  if (!colorMemo[index]) colorMemo[index] = randomColor();
+  const color = useMemo(() => new Color('#1ED1E2'), [theme.snake]);
 
   return (
     <mesh {...props} geometry={smooth}>
-      {/* <boxBufferGeometry
-        attach="geometry"
-        args={[segmentSize, segmentSize, 0.5]}
-      /> */}
       <meshPhysicalMaterial
         attach="material"
-        color={theme.snake}
+        color={color}
         roughness={1}
+      // emissive={color}
+      // emissiveIntensity={0.8}
+      // transparent={true}
+      // opacity={.8}
+      // side={DoubleSide}
       />
     </mesh>
   );

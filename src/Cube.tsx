@@ -1,7 +1,7 @@
 import React, { useContext, useMemo } from 'react';
 
 import { ThemeContext } from 'styled-components';
-import { Vector3, CylinderBufferGeometry } from 'three';
+import { Vector3, CylinderBufferGeometry, BackSide } from 'three';
 
 import { BufferGeometryUtils } from 'three/examples/jsm/utils/BufferGeometryUtils';
 
@@ -20,13 +20,14 @@ const Cube = ({ size }: Props) => {
       <mesh>
         <boxBufferGeometry
           attach="geometry"
-          args={[size - 0.01, size - 0.01, size - 0.01]}
+          args={[size - 0.05, size - 0.05, size - 0.05]}
         />
         <meshBasicMaterial
           attach="material"
           color={theme.background}
           transparent={true}
-          opacity={0.4}
+          opacity={.5}
+          side={BackSide}
         />
       </mesh>
     </group>
