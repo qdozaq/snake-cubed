@@ -1,6 +1,6 @@
 export default {
   light: {
-    background: '#ff80ae',
+    background: { from: '#ff80ae', to: '#bd5e81' },
     cube: '#111',
     // snake: '#28BDAD',
     snake: '#52B4CC',

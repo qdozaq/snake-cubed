@@ -24,7 +24,7 @@ const Cube = ({ size }: Props) => {
         />
         <meshBasicMaterial
           attach="material"
-          color={theme.background}
+          color={theme.background.from}
           transparent={true}
           opacity={.5}
           side={BackSide}
