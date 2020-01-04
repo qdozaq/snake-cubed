@@ -12,12 +12,14 @@ export const buildCubeMap = (size: number): CubeMap => {
   const xSide = buildSide(size, Direction.X); // 90 deg right on Y
   const _xSide = buildSide(size, Direction._X); // 90 deg left on Y
 
-  attach(xSide, ySide, _ySide, zSide, _zSide);
-  attach(_xSide, ySide, _ySide, zSide, _zSide);
-  attach(ySide, _xSide, xSide, _zSide, zSide);
-  attach(_ySide, _xSide, xSide, _zSide, zSide);
-  attach(zSide, ySide, _ySide, _xSide, xSide);
-  attach(_zSide, ySide, _ySide, _xSide, xSide);
+  // memoize what edges have already been connected
+  const edgeMemo = {};
+  attach(edgeMemo, xSide, ySide, _ySide, zSide, _zSide);
+  attach(edgeMemo, _xSide, ySide, _ySide, zSide, _zSide);
+  attach(edgeMemo, ySide, _xSide, xSide, _zSide, zSide);
+  attach(edgeMemo, _ySide, _xSide, xSide, _zSide, zSide);
+  attach(edgeMemo, zSide, ySide, _ySide, _xSide, xSide);
+  attach(edgeMemo, _zSide, ySide, _ySide, _xSide, xSide);
 
   let index = 0;
   const cube = [
@@ -35,13 +37,11 @@ export const buildCubeMap = (size: number): CubeMap => {
   return cube;
 };
 
-const attach = (main: PositionNode[], ...sides: PositionNode[][]) => {
-  sides.forEach(side => connectEdge(main, side));
+const attach = (edgeMemo: { [key: string]: boolean }, main: PositionNode[], ...sides: PositionNode[][]) => {
+  sides.forEach(side => connectEdge(edgeMemo, main, side));
 };
 
-const memo = {};
-
-const connectEdge = (node1: PositionNode[], node2: PositionNode[]) => {
+const connectEdge = (memo: { [key: string]: boolean }, node1: PositionNode[], node2: PositionNode[]) => {
   const direction1 = node1[0].direction;
   const direction2 = node2[0].direction;
 

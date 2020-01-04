@@ -13,13 +13,14 @@ import { PositionNode, invertDirection, Direction } from './PositionNode';
 import { CubeMap } from './map';
 import GameStates from './GameStates';
 
+type InitAction = { type: 'INIT', payload: { map: CubeMap } };
 type ForwardAction = {
   type: 'FORWARD';
   payload: { map: CubeMap; setGameState: Dispatch<SetStateAction<GameStates>> };
 };
 type LeftAction = { type: 'LEFT' };
 type RightAction = { type: 'RIGHT' };
-type Action = ForwardAction | LeftAction | RightAction;
+type Action = ForwardAction | LeftAction | RightAction | InitAction;
 
 export type State = {
   direction: string;
@@ -52,11 +53,15 @@ export default ({ map, speed, children, gameState, setGameState }: Props) => {
         ...state,
         food:
           state.emptySpaces[
-            Math.floor(Math.random() * state.emptySpaces.length)
+          Math.floor(Math.random() * state.emptySpaces.length)
           ]
       };
     }
   );
+
+  useEffect(() => {
+    dispatch({ type: 'INIT', payload: { map } })
+  }, [map.length]);
 
   const [snakeVisible, setSnakeVisible] = useState(true);
 
@@ -135,11 +140,23 @@ const reducer = (state: State, action: Action) => {
   const head = snake[0];
   const currentSide = head.direction;
   let newDirection: string;
+  let map: CubeMap;
 
   switch (action.type) {
+    case 'INIT':
+      map = action.payload.map;
+      const empty = new Array(map.length - 1).fill(1).map((_, i) => i + 1);
+      const newFood = empty[Math.floor(Math.random() * empty.length)];
+      console.log({ newFood });
+      return {
+        direction: 'y',
+        snake: [map[0]],
+        emptySpaces: empty,
+        food: newFood
+      }
     case 'FORWARD':
       const [newHead, newDir] = forwardNode(head, direction);
-      const map = action.payload.map;
+      map = action.payload.map;
       if (newHead.index === map[food].index) {
         const newSnake = [newHead, ...snake];
         // need to filter out from all the indexs not the ones already in empty spaces

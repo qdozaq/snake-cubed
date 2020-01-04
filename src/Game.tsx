@@ -1,5 +1,5 @@
-import React, { useState, useContext } from 'react';
-import { Canvas, WebCanvasProps } from 'react-three-fiber';
+import React, { useState, useContext, useMemo, useEffect } from 'react';
+import { Canvas, WebCanvasProps, useThree } from 'react-three-fiber';
 import styled, { ThemeContext } from 'styled-components';
 
 import Cube from './Cube';
@@ -19,17 +19,16 @@ const Container = styled.div`
   background-image: ${({ theme }) => `radial-gradient(${theme.background.from} 80%, ${theme.background.to})`};
 `;
 
-const SIZE = 3;
-const SPEED = 2;
+type GameProps = {
+  size: number;
+  speed: number;
+}
 
-const cubeMap = buildCubeMap(SIZE);
-
-
-const Game = () => {
-  const theme = useContext(ThemeContext);
+const Game = ({ size, speed }: GameProps) => {
+  const cubeMap = useMemo(() => buildCubeMap(size), [size]);
   const [gameState, setGameState] = useState<GameStates>(GameStates.PLAYING);
-  return (
 
+  return (
     <Container>
       {gameState == GameStates.LOSE && (
         <YouLose>
@@ -40,7 +39,7 @@ const Game = () => {
           </h1>
         </YouLose>
       )}
-      <CanvasWithProviders camera={{ position: [0, 0, SIZE * 2.5], far: 1000 }} shadowMap>
+      <CanvasWithProviders camera={{ far: 1000 }} shadowMap>
         <ambientLight intensity={1.5} />
         <spotLight
           intensity={0.5}
@@ -51,12 +50,12 @@ const Game = () => {
           shadow-mapSize-height={2048}
           castShadow
         />
-        <Rotation>
-          <Cube size={SIZE} />
+        <Rotation position={[0, 0, -size]}>
+          <Cube size={size} />
           {/* <axesHelper args={[SIZE * 2]}></axesHelper> */}
           <Controller
             map={cubeMap}
-            speed={SPEED}
+            speed={speed}
             gameState={gameState}
             setGameState={setGameState}
           >

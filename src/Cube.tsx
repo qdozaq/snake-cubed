@@ -13,7 +13,7 @@ const Cube = ({ size }: Props) => {
   const theme = useContext(ThemeContext);
 
   return (
-    <group>
+    <group >
       <Grid size={size} color={theme.cube}></Grid>
       {/* 
       transparent inner box */}

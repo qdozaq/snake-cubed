@@ -5,6 +5,7 @@ import { Mesh, Vector3 } from 'three';
 
 type Props = {
   children: React.ReactNode;
+  position?: Vector3 | [number, number, number];
 };
 
 let prevX = 0,
@@ -12,7 +13,7 @@ let prevX = 0,
 
 const UP = new Vector3(0, 1, 0);
 
-export default ({ children }: Props) => {
+export default ({ children, position }: Props) => {
   const [{ rotation }, set] = useSpring(() => ({
     rotation: [0, 0, 0]
   }));
@@ -46,7 +47,7 @@ export default ({ children }: Props) => {
   );
 
   return (
-    <a.group {...bindDrag()} rotation={rotation} ref={ref}>
+    <a.group {...bindDrag()} rotation={rotation} position={position} ref={ref}>
       {children}
     </a.group>
   );
