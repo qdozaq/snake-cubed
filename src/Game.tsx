@@ -29,52 +29,52 @@ const Game = ({ size, speed }: GameProps) => {
   const [gameState, setGameState] = useState<GameStates>(GameStates.PLAYING);
 
   return (
-    <Container>
-      {gameState == GameStates.LOSE && (
-        <YouLose>
-          <h1>
-            YOU
-            <br />
-            LOSE
-          </h1>
-        </YouLose>
-      )}
-      <CanvasWithProviders camera={{ far: 1000 }} shadowMap>
-        <ambientLight intensity={1.5} />
-        <spotLight
-          intensity={0.5}
-          position={[12, 50, 12]}
-          angle={1}
-          penumbra={1}
-          shadow-mapSize-width={2048}
-          shadow-mapSize-height={2048}
-          castShadow
-        />
-        <Rotation distance={size * 1.2}>
-          <Cube size={size} />
-          {/* <axesHelper args={[SIZE * 2]}></axesHelper> */}
-          <Controller
-            map={cubeMap}
-            speed={speed}
-            gameState={gameState}
-            setGameState={setGameState}
-          >
-            {state => {
-              return (
-                <>
-                  <Food position={state.food.vector} />
-                  <Snake body={state.snake}></Snake>
-                </>
-              );
-            }}
-          </Controller>
-        </Rotation>
-      </CanvasWithProviders>
-      {/* <Buttons>
-        <button onClick={left}>left</button>
-        <button onClick={right}>right</button>
-      </Buttons> */}
-    </Container>
+    // <Container>
+    //   {gameState == GameStates.LOSE && (
+    //     <YouLose>
+    //       <h1>
+    //         YOU
+    //         <br />
+    //         LOSE
+    //       </h1>
+    //     </YouLose>
+    //   )}
+    <CanvasWithProviders camera={{ far: 1000 }} shadowMap>
+      <ambientLight intensity={1.5} />
+      <spotLight
+        intensity={0.5}
+        position={[12, 50, 12]}
+        angle={1}
+        penumbra={1}
+        shadow-mapSize-width={2048}
+        shadow-mapSize-height={2048}
+        castShadow
+      />
+      <Rotation distance={size * 1.2}>
+        <Cube size={size} />
+        {/* <axesHelper args={[SIZE * 2]}></axesHelper> */}
+        <Controller
+          map={cubeMap}
+          speed={speed}
+          gameState={gameState}
+          setGameState={setGameState}
+        >
+          {state => {
+            return (
+              <>
+                <Food position={state.food.vector} />
+                <Snake body={state.snake}></Snake>
+              </>
+            );
+          }}
+        </Controller>
+      </Rotation>
+    </CanvasWithProviders>
+    // {/* <Buttons>
+    //   <button onClick={left}>left</button>
+    //   <button onClick={right}>right</button>
+    // </Buttons> */}
+    // </Container>
   );
 };
 export default Game;

@@ -5,6 +5,8 @@ export default {
     // snake: '#28BDAD',
     snake: '#52B4CC',
     // food: 'yellow'
-    food: '#FFF20E'
+    food: '#FFF20E',
+    menuButton: '#a5476a',
+    menuButtonHover: '#3c1020'
   }
 };

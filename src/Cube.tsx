@@ -46,7 +46,6 @@ const Grid = ({ size, color }: GridProps) => {
       clearcoat={0.1}
       reflectivity={0.2}
       metalness={0.3}
-    // wireframe={true}
     />
   </mesh>
 };

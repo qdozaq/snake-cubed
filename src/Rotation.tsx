@@ -15,7 +15,7 @@ const UP = new Vector3(0, 1, 0);
 
 export default ({ children, distance }: Props) => {
   const [{ rotation }, set] = useSpring(() => ({
-    rotation: [0, 0, 0]
+    rotation: [Math.PI / 4, Math.PI / 4, 0]
   }));
 
   const ref = useRef<Mesh>();
