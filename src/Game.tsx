@@ -16,7 +16,7 @@ const Container = styled.div`
   display: inline-flex;
   height: 100vh;
   width: 100vw;
-  background-image: ${({ theme }) => `radial-gradient(${theme.background.from}, ${theme.background.to})`};
+  background-image: ${({ theme }) => `radial-gradient(${theme.background.from} 80%, ${theme.background.to})`};
 `;
 
 const SIZE = 3;

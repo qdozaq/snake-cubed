@@ -1,5 +1,5 @@
 import React from 'react';
-import { ThemeProvider, ThemeContext } from 'styled-components';
+import { ThemeProvider } from 'styled-components';
 
 import Game from './Game';
 import themes from './themes';

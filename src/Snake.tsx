@@ -45,13 +45,12 @@ type SnakeSegmentProps = {
 
 export const SnakeSegment = ({ index, ...props }: SnakeSegmentProps) => {
   const theme = useContext(ThemeContext);
-  const color = useMemo(() => new Color('#1ED1E2'), [theme.snake]);
 
   return (
     <mesh {...props} geometry={smooth}>
       <meshPhysicalMaterial
         attach="material"
-        color={color}
+        color={theme.snake}
         roughness={1}
       // emissive={color}
       // emissiveIntensity={0.8}
