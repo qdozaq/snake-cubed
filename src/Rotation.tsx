@@ -1,11 +1,11 @@
-import React, { useRef } from 'react';
+import React, { useRef, useEffect } from 'react';
 import { useDrag } from 'react-use-gesture';
 import { useSpring, a } from 'react-spring/three';
 import { Mesh, Vector3 } from 'three';
 
 type Props = {
   children: React.ReactNode;
-  position?: Vector3 | [number, number, number];
+  distance: number;
 };
 
 let prevX = 0,
@@ -13,7 +13,7 @@ let prevX = 0,
 
 const UP = new Vector3(0, 1, 0);
 
-export default ({ children, position }: Props) => {
+export default ({ children, distance }: Props) => {
   const [{ rotation }, set] = useSpring(() => ({
     rotation: [0, 0, 0]
   }));
@@ -47,7 +47,7 @@ export default ({ children, position }: Props) => {
   );
 
   return (
-    <a.group {...bindDrag()} rotation={rotation} position={position} ref={ref}>
+    <a.group {...bindDrag()} rotation={rotation} position={[0, 0, -distance]} ref={ref}>
       {children}
     </a.group>
   );

@@ -50,7 +50,7 @@ const Game = ({ size, speed }: GameProps) => {
           shadow-mapSize-height={2048}
           castShadow
         />
-        <Rotation position={[0, 0, -size]}>
+        <Rotation distance={size * 1.2}>
           <Cube size={size} />
           {/* <axesHelper args={[SIZE * 2]}></axesHelper> */}
           <Controller
@@ -62,7 +62,7 @@ const Game = ({ size, speed }: GameProps) => {
             {state => {
               return (
                 <>
-                  <Food position={cubeMap[state.food].vector} />
+                  <Food position={state.food.vector} />
                   <Snake body={state.snake}></Snake>
                 </>
               );

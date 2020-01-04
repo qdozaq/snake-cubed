@@ -26,7 +26,7 @@ export type State = {
   direction: string;
   snake: PositionNode[];
   emptySpaces: number[];
-  food: number;
+  food: PositionNode;
 };
 
 type Props = {
@@ -46,15 +46,16 @@ export default ({ map, speed, children, gameState, setGameState }: Props) => {
       direction: 'y',
       snake: [map[0]],
       emptySpaces: new Array(map.length - 1).fill(1).map((_, i) => i + 1),
-      food: 0
+      food: null
     },
     (state: State) => {
+      const index = state.emptySpaces[
+        Math.floor(Math.random() * state.emptySpaces.length)
+      ]
+
       return {
         ...state,
-        food:
-          state.emptySpaces[
-          Math.floor(Math.random() * state.emptySpaces.length)
-          ]
+        food: map[index]
       };
     }
   );
@@ -136,7 +137,7 @@ const forwardNode = (
 };
 
 const reducer = (state: State, action: Action) => {
-  const { direction, snake, food, emptySpaces } = state;
+  const { direction, snake, food } = state;
   const head = snake[0];
   const currentSide = head.direction;
   let newDirection: string;
@@ -146,30 +147,29 @@ const reducer = (state: State, action: Action) => {
     case 'INIT':
       map = action.payload.map;
       const empty = new Array(map.length - 1).fill(1).map((_, i) => i + 1);
-      const newFood = empty[Math.floor(Math.random() * empty.length)];
-      console.log({ newFood });
+      const foodIndex = empty[Math.floor(Math.random() * empty.length)];
       return {
         direction: 'y',
         snake: [map[0]],
         emptySpaces: empty,
-        food: newFood
+        food: map[foodIndex]
       }
     case 'FORWARD':
       const [newHead, newDir] = forwardNode(head, direction);
       map = action.payload.map;
-      if (newHead.index === map[food].index) {
+      if (newHead.index === food.index) {
         const newSnake = [newHead, ...snake];
         // need to filter out from all the indexs not the ones already in empty spaces
         const newEmptySpaces = map.reduce((agg: number[], node) => {
           if (!newSnake.some(s => s.index === node.index)) agg.push(node.index);
           return agg;
         }, []);
-        const newFood =
+        const newFoodIndex =
           newEmptySpaces[Math.floor(Math.random() * newEmptySpaces.length)];
         return {
           direction: newDir,
           snake: newSnake,
-          food: newFood,
+          food: map[newFoodIndex],
           emptySpaces: newEmptySpaces
         };
       }
