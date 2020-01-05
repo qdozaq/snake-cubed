@@ -22,9 +22,10 @@ const Container = styled.div`
 type GameProps = {
   size: number;
   speed: number;
+  start: boolean;
 }
 
-const Game = ({ size, speed }: GameProps) => {
+const Game = ({ size, speed, start }: GameProps) => {
   const cubeMap = useMemo(() => buildCubeMap(size), [size]);
   const [gameState, setGameState] = useState<GameStates>(GameStates.PLAYING);
 
@@ -50,7 +51,7 @@ const Game = ({ size, speed }: GameProps) => {
         shadow-mapSize-height={2048}
         castShadow
       />
-      <Rotation distance={size * 1.2}>
+      <Rotation distance={size * 1.2} start={start}>
         <Cube size={size} />
         {/* <axesHelper args={[SIZE * 2]}></axesHelper> */}
         <Controller
