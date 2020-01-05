@@ -81,6 +81,7 @@ const MenuButton = styled.button<{ clicked?: boolean }>`
   font-size: 3rem;
   line-height: 4rem;
   outline: none;
+  -webkit-tap-highlight-color: rgba(0,0,0,0);
 
   transition: color .3s ease-out,
               text-decoration .3s ease-out,
