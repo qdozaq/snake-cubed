@@ -9,6 +9,7 @@ export const MenuButton = styled.button<{ clicked?: boolean }>`
   line-height: 4rem;
   outline: none;
   -webkit-tap-highlight-color: rgba(0,0,0,0);
+  white-space: nowrap;
 
   transition: color .3s ease-out,
               text-decoration .3s ease-out,

@@ -6,6 +6,9 @@ import Game from './Game';
 import themes from './themes';
 import { MenuContainer, MenuButton } from './Menu';
 import Arrow from './ArrowButton';
+import DragAnimation from './DragAnimation';
+import MoveAnimation from './MoveAnimation';
+import GlobalStyle from './GlobalStyle';
 
 const DEFAULT_SIZE = 3;
 const DEFAULT_SPEED = 2;
@@ -26,28 +29,42 @@ const App = () => {
   return (
     <>
       <ThemeProvider theme={themes.light}>
-        <Container inMenu={!start}>
-          <Game size={size} speed={speed} start={start} />
-          <MenuContainer show={!(start || howTo)}>
-            <MenuButton onClick={toggleStart} clicked={start}>Start</MenuButton>
-            <MenuButton onClick={toggleHowTo} clicked={howTo}>How to play</MenuButton>
-            <MenuButton>Settings</MenuButton>
-          </MenuContainer>
-          <MenuContainer show={howTo}>
-            <HowTo>
-              <Arrow onClick={toggleHowTo} />
-              <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer molestie, tellus ac volutpat rhoncus, ante turpis lacinia eros, sed fringilla urna risus ac urna. Aenean at lorem sed elit luctus auctor in auctor mauris. Proin tincidunt, tellus eget venenatis interdum, est dolor luctus nunc, eget auctor lorem nisl ac massa. Vestibulum vitae sollicitudin velit, at vehicula purus. Phasellus id pulvinar massa. Vivamus ac nisi lorem. Suspendisse pharetra justo sed eros efficitur, ac viverra justo placerat. Donec imperdiet mauris diam, et rhoncus ante congue at. Sed orci turpis, congue vitae dolor eu, dapibus elementum lorem. Phasellus tristique quam ex. Ut diam eros, tristique vitae egestas eu, ultrices at quam. Maecenas sed ullamcorper neque. Maecenas aliquam nunc sit amet semper molestie. Sed non lectus in quam pulvinar suscipit a ut justo. Sed elementum vestibulum velit et viverra.
-            </p>
-            </HowTo>
-          </MenuContainer>
+        <>
+          <GlobalStyle />
+          <Container inMenu={!start}>
+            <Game size={size} speed={speed} start={start} />
+            <MenuContainer show={!(start || howTo)}>
+              <MenuButton onClick={toggleStart} clicked={start}>Start</MenuButton>
+              <MenuButton onClick={toggleHowTo} clicked={howTo}>How to play</MenuButton>
+              <MenuButton>Settings</MenuButton>
+            </MenuContainer>
+            <MenuContainer show={howTo}>
+              <HowTo>
+                <Arrow onClick={toggleHowTo} />
+                <h1>How to play</h1>
+                <HowToSection>
+                  <DragAnimation />
+                  <Paragraph>
+                    Swipe or drag on the cube to rotate it.
+                  </Paragraph>
+                </HowToSection>
+                <HowToSection reverse>
+                  <Paragraph>
+                    Use the &larr; &rarr; keys, or <b>A</b> and <b>D</b> to change the direction of the snake. <b>Left</b> and <b>right</b> are tied to the snake's orientation, which is important to keep in mind when figuring out which direction you want to go.
+                  </Paragraph>
+                  <MoveAnimation />
+                </HowToSection>
+              </HowTo>
+            </MenuContainer>
 
-          {/* <SlidersContainer>
+            {/* <SlidersContainer>
             <span>Size: {size}</span>
             <Slider onChange={handleSize} type='range' min='1' max='20' value={size.toString()} />
             <span>Speed: {speed}</span>
             <Slider onChange={handleSpeed} type='range' min='1' max='20' value={speed.toString()} />
           </SlidersContainer> */}
-        </Container>
+          </Container>
+        </>
       </ThemeProvider>
     </>
   );
@@ -55,15 +72,30 @@ const App = () => {
 
 export default App;
 
-const HowTo = styled.div`
-  width: auto;
-  margin: 2rem;
-  margin-bottom: 0;
-  margin-top: 5rem;
+const HowToSection = styled.section<{ reverse?: boolean }>`
+  display: flex;
+  justify-content: center;
+  @media only screen and (max-width:38rem) {
+    flex-direction: ${props => props.reverse ? 'column-reverse' : 'column'};
+    align-items: center;
+  }
+`;
 
-  @media only screen and (min-width:800px) {
-    width: 50vw;
-    margin:0; 
+const Paragraph = styled.p`
+  margin: 1rem;
+  width: 100%;
+  font-size: 1.2rem;
+`;
+
+
+const HowTo = styled.div`
+  width: 35rem;
+  margin:0; 
+  overflow-y: auto;
+
+  @media only screen and (max-width:38rem) {
+    width: auto;
+    margin: 0 2rem;
   }
 `;
 
