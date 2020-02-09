@@ -22,7 +22,7 @@ export default createGlobalStyle`
     width: 100vw;
     height: 100%;
     padding: 0;
-    overscroll-behavior: none;
+    /* overscroll-behavior: none; */
     touch-action: none;
   }
 
