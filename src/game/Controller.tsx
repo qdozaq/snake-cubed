@@ -38,6 +38,8 @@ type Props = {
 };
 
 let time = 0;
+// lock 'locks' user input so that the snake can't turn multiple times before moving forward
+let lock = false;
 
 export default ({ map, speed, children, gameState, setGameState }: Props) => {
   const [state, dispatch] = useReducer<Reducer<State, Action>, any>(
@@ -72,6 +74,7 @@ export default ({ map, speed, children, gameState, setGameState }: Props) => {
     switch (gameState) {
       case GameStates.PLAYING:
         if (speed > 0 && time > 1 / speed) {
+          lock = false;
           dispatch({ type: 'FORWARD', payload: { map, setGameState } });
           time = 0;
         }
@@ -89,6 +92,9 @@ export default ({ map, speed, children, gameState, setGameState }: Props) => {
   });
 
   const move = (e: KeyboardEvent) => {
+    if (lock) return;
+
+    lock = true;
     switch (e.key.toUpperCase()) {
       case 'D':
       case 'ARROWRIGHT':
