@@ -3,6 +3,7 @@ export default {
     primary: '#ff80ae',
     secondary: '#111',
     accent: '#52B4CC',
+    secondaryAccent: '#FFF20E',
     background: { from: '#ff80ae', to: '#bd5e81' },
     cube: '#111',
     // snake: '#28BDAD',

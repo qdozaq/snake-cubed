@@ -1,14 +1,11 @@
 import React, { useState, ChangeEvent } from 'react';
 import styled, { ThemeProvider, css } from 'styled-components';
-import { CSSTransition } from 'react-transition-group';
 
-import Game from './Game';
+import Game from './game/Game';
 import themes from './themes';
 import { MenuContainer, MenuButton } from './Menu';
-import Arrow from './ArrowButton';
-import DragAnimation from './DragAnimation';
-import MoveAnimation from './MoveAnimation';
 import GlobalStyle from './GlobalStyle';
+import HowToPage from './howto/HowToPage';
 
 const DEFAULT_SIZE = 3;
 const DEFAULT_SPEED = 2;
@@ -36,27 +33,10 @@ const App = () => {
             <MenuContainer show={!(start || howTo)}>
               <MenuButton onClick={toggleStart} clicked={start}>Start</MenuButton>
               <MenuButton onClick={toggleHowTo} clicked={howTo}>How to play</MenuButton>
-              <MenuButton>Settings</MenuButton>
             </MenuContainer>
             <MenuContainer show={howTo}>
-              <HowTo>
-                <Arrow onClick={toggleHowTo} />
-                <h1>How to play</h1>
-                <HowToSection>
-                  <DragAnimation />
-                  <Paragraph>
-                    Swipe or drag on the cube to rotate it.
-                  </Paragraph>
-                </HowToSection>
-                <HowToSection reverse>
-                  <Paragraph>
-                    Use the &larr; &rarr; keys, or <b>A</b> and <b>D</b> to change the direction of the snake. <b>Left</b> and <b>right</b> are tied to the snake's orientation, which is important to keep in mind when figuring out which direction you want to go.
-                  </Paragraph>
-                  <MoveAnimation />
-                </HowToSection>
-              </HowTo>
+              <HowToPage toggle={toggleHowTo} />
             </MenuContainer>
-
             {/* <SlidersContainer>
             <span>Size: {size}</span>
             <Slider onChange={handleSize} type='range' min='1' max='20' value={size.toString()} />
@@ -72,32 +52,6 @@ const App = () => {
 
 export default App;
 
-const HowToSection = styled.section<{ reverse?: boolean }>`
-  display: flex;
-  justify-content: center;
-  @media only screen and (max-width:38rem) {
-    flex-direction: ${props => props.reverse ? 'column-reverse' : 'column'};
-    align-items: center;
-  }
-`;
-
-const Paragraph = styled.p`
-  margin: 1rem;
-  width: 100%;
-  font-size: 1.2rem;
-`;
-
-
-const HowTo = styled.div`
-  width: 35rem;
-  margin:0; 
-  overflow-y: auto;
-
-  @media only screen and (max-width:38rem) {
-    width: auto;
-    margin: 0 2rem;
-  }
-`;
 
 const Slider = styled.input`
   width: 100%;
