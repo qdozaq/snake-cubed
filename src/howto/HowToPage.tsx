@@ -38,8 +38,9 @@ const HowTo = styled.div`
   @media only screen and (max-width:38rem) {
     width: auto;
     margin: 0 2rem;
-    padding-bottom: 10rem;
+    padding-bottom: 5rem;
     padding-top: 5rem;
+    overflow: hidden;
     overflow-y: auto;
   }
 `;
