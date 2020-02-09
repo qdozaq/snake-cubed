@@ -22,7 +22,6 @@ export default createGlobalStyle`
     width: 100vw;
     height: 100%;
     padding: 0;
-    overflow: hidden;
     overscroll-behavior: none;
     touch-action: none;
   }
