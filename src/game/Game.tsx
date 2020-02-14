@@ -1,5 +1,5 @@
 import React, { useState, useContext, useMemo, useEffect } from 'react';
-import { Canvas, WebCanvasProps, useThree } from 'react-three-fiber';
+import { Canvas, CanvasProps, useThree } from 'react-three-fiber';
 import styled, { ThemeContext } from 'styled-components';
 
 import Cube from './Cube';
@@ -130,7 +130,7 @@ const right = () => {
 
 
 // Work around for react-three-fiber canvas reconciler mangling providers
-function CanvasWithProviders({ children, ...props }: WebCanvasProps) {
+function CanvasWithProviders({ children, ...props }: CanvasProps) {
   const theme = useContext(ThemeContext);
   return (
     //@ts-ignore props mismatch
