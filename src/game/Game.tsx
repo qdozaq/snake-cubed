@@ -4,13 +4,11 @@ import styled, { ThemeContext } from 'styled-components';
 
 import Cube from './Cube';
 import Rotation from './Rotation';
-import Controller from './Controller';
+import { useGameState, GameStates } from './useGameState';
 import Snake from './Snake';
 import Food from './Food';
 
 import { buildCubeMap } from './map';
-import GameStates from './GameStates';
-import { DoubleSide } from 'three';
 
 const Container = styled.div`
   display: inline-flex;
@@ -27,7 +25,8 @@ type GameProps = {
 
 const Game = ({ size, speed, start }: GameProps) => {
   const cubeMap = useMemo(() => buildCubeMap(size), [size]);
-  const [gameState, setGameState] = useState<GameStates>(GameStates.PLAYING);
+  // const [gameState, setGameState] = useState<GameStates>(GameStates.PLAYING);
+  const { gameState, food, snake } = useGameState(cubeMap, speed);
 
   return (
     // <Container>
@@ -40,7 +39,7 @@ const Game = ({ size, speed, start }: GameProps) => {
     //       </h1>
     //     </YouLose>
     //   )}
-    <CanvasWithProviders camera={{ far: 1000 }} shadowMap>
+    <>
       <ambientLight intensity={1.5} />
       <spotLight
         intensity={0.5}
@@ -54,23 +53,10 @@ const Game = ({ size, speed, start }: GameProps) => {
       <Rotation distance={size * 1.2} start={start}>
         <Cube size={size} />
         {/* <axesHelper args={[SIZE * 2]}></axesHelper> */}
-        <Controller
-          map={cubeMap}
-          speed={speed}
-          gameState={gameState}
-          setGameState={setGameState}
-        >
-          {state => {
-            return (
-              <>
-                <Food position={state.food.vector} />
-                <Snake body={state.snake}></Snake>
-              </>
-            );
-          }}
-        </Controller>
+        <Food position={food.vector} />
+        <Snake body={snake} />
       </Rotation>
-    </CanvasWithProviders>
+    </>
     // {/* <Buttons>
     //   <button onClick={left}>left</button>
     //   <button onClick={right}>right</button>
@@ -78,7 +64,12 @@ const Game = ({ size, speed, start }: GameProps) => {
     // </Container>
   );
 };
-export default Game;
+
+export default (props: GameProps) => (
+  <CanvasWithProviders camera={{ far: 1000 }} shadowMap>
+    <Game {...props}></Game>
+  </CanvasWithProviders>
+)
 
 // const Plane = ({ size }: { size: number }) => (
 //   <mesh
