@@ -40,9 +40,9 @@ const Game = ({ size, speed, start }: GameProps) => {
     //     </YouLose>
     //   )}
     <>
-      <ambientLight intensity={1.5} />
+      <ambientLight intensity={1} />
       <spotLight
-        intensity={0.5}
+        intensity={0.3}
         position={[12, 50, 12]}
         angle={1}
         penumbra={1}

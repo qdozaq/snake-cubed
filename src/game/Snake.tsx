@@ -50,10 +50,9 @@ export const SnakeSegment = ({ index, ...props }: SnakeSegmentProps) => {
     <mesh {...props} geometry={smooth}>
       <meshPhysicalMaterial
         attach="material"
-        color={theme.snake}
-        roughness={1}
-      // emissive={color}
-      // emissiveIntensity={0.8}
+        color={theme.accent}
+        roughness={.5}
+
       // transparent={true}
       // opacity={.8}
       // side={DoubleSide}
