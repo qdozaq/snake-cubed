@@ -1,12 +1,14 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { useDrag } from 'react-use-gesture';
 import { useSpring, a } from 'react-spring/three';
 import { Mesh, Vector3 } from 'three';
+import { GameStates } from './useGameState';
 
 type Props = {
   children: React.ReactNode;
   distance: number;
-  start?: boolean
+  start?: boolean;
+  state: GameStates;
 };
 
 let prevX = 0,
@@ -14,18 +16,27 @@ let prevX = 0,
 
 const UP = new Vector3(0, 1, 0);
 
-export default ({ children, distance, start }: Props) => {
+export default ({ children, distance, start, state }: Props) => {
   const [started, setStarted] = useState(false);
   const [{ rotation }, set] = useSpring(() => ({
     rotation: [Math.PI / 4, Math.PI / 4 - Math.PI, 0]
   }));
-
-  if (!started && start) {
-    setStarted(true);
-    set({ rotation: [0, 0, 0], config: { mass: 5, tension: 40 } });
-  }
-
   const ref = useRef<Mesh>();
+
+  useEffect(() => {
+    switch (state) {
+      case GameStates.MENU:
+        prevX = 0;
+        prevY = 0;
+        set({ rotation: [Math.PI / 4, Math.PI / 4 - Math.PI, 0], config: { mass: 5, tension: 40 } });
+        break;
+      case GameStates.PLAYING:
+        set({ rotation: [0, 0, 0], config: { mass: 5, tension: 40 } });
+        break;
+      default:
+    }
+  }, [state]);
+
 
   const dampen = 100;
   const bindDrag = useDrag(

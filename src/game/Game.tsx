@@ -1,44 +1,68 @@
-import React, { useState, useContext, useMemo, useEffect } from 'react';
-import { Canvas, CanvasProps, useThree } from 'react-three-fiber';
+import React, { useState, useContext, useMemo, useEffect, ReactNode } from 'react';
+import { Canvas, CanvasProps, useFrame } from 'react-three-fiber';
 import styled, { ThemeContext } from 'styled-components';
 
 import Cube from './Cube';
 import Rotation from './Rotation';
-import { useGameState, GameStates } from './useGameState';
+import { useGameState, GameStates, State, GameDispatch } from './useGameState';
 import Snake from './Snake';
 import Food from './Food';
 
 import { buildCubeMap } from './map';
 
 const Container = styled.div`
-  display: inline-flex;
+  display: block;
+  position: absolute;
+  top: 0;
   height: 100vh;
   width: 100vw;
-  background-image: ${({ theme }) => `radial-gradient(${theme.background.from} 80%, ${theme.background.to})`};
 `;
 
 type GameProps = {
   size: number;
   speed: number;
   start: boolean;
+  toggle: VoidFunction;
 }
 
-const Game = ({ size, speed, start }: GameProps) => {
-  const cubeMap = useMemo(() => buildCubeMap(size), [size]);
-  // const [gameState, setGameState] = useState<GameStates>(GameStates.PLAYING);
-  const { gameState, food, snake } = useGameState(cubeMap, speed);
+type GamePropsWithState = GameProps & {
+  state: State;
+  dispatch: GameDispatch;
+}
+
+let time = 0;
+
+const Game = ({ size, speed, start, toggle, state, dispatch }: GamePropsWithState) => {
+  const [snakeVisible, setSnakeVisible] = useState(true);
+  const { snake, food } = state;
+
+  useFrame((_, delta) => {
+    time += delta;
+
+    switch (state.gameState) {
+      case GameStates.MENU:
+      case GameStates.PLAYING:
+        if (speed > 0 && time > 1 / speed) {
+          dispatch({ type: 'FORWARD' });
+          time = 0;
+        }
+
+        if (!snakeVisible) setSnakeVisible(true);
+        break;
+      case GameStates.LOSE:
+        if (time > 0.5) {
+          setSnakeVisible(val => !val);
+          time = 0;
+        }
+        break;
+      case GameStates.WIN:
+        break;
+      default:
+    }
+
+  });
 
   return (
-    // <Container>
-    //   {gameState == GameStates.LOSE && (
-    //     <YouLose>
-    //       <h1>
-    //         YOU
-    //         <br />
-    //         LOSE
-    //       </h1>
-    //     </YouLose>
-    //   )}
     <>
       <ambientLight intensity={1} />
       <spotLight
@@ -50,26 +74,15 @@ const Game = ({ size, speed, start }: GameProps) => {
         shadow-mapSize-height={2048}
         castShadow
       />
-      <Rotation distance={size * 1.2} start={start}>
+      <Rotation distance={size * 1.2} start={start} state={state.gameState}>
         <Cube size={size} />
         {/* <axesHelper args={[SIZE * 2]}></axesHelper> */}
         <Food position={food.vector} />
-        <Snake body={snake} />
+        <Snake body={snakeVisible ? snake : []} />
       </Rotation>
     </>
-    // {/* <Buttons>
-    //   <button onClick={left}>left</button>
-    //   <button onClick={right}>right</button>
-    // </Buttons> */}
-    // </Container>
   );
 };
-
-export default (props: GameProps) => (
-  <CanvasWithProviders camera={{ far: 1000 }} shadowMap>
-    <Game {...props}></Game>
-  </CanvasWithProviders>
-)
 
 // const Plane = ({ size }: { size: number }) => (
 //   <mesh
@@ -119,16 +132,35 @@ const right = () => {
   window.dispatchEvent(new KeyboardEvent('keydown', { key: 'd' }));
 };
 
-
-// Work around for react-three-fiber canvas reconciler mangling providers
-function CanvasWithProviders({ children, ...props }: CanvasProps) {
+export default function GameWrapper(props: GameProps) {
   const theme = useContext(ThemeContext);
+
+  const cubeMap = useMemo(() => buildCubeMap(props.size), [props.size]);
+  const [state, dispatch] = useGameState(cubeMap);
+
+  useEffect(() => {
+    if (props.start) {
+      dispatch({ type: 'PLAY' });
+    }
+  }, [props.start]);
+
+  const handleClick = () => {
+    dispatch({ type: 'INIT', payload: { map: cubeMap } });
+    props.toggle();
+  }
+
   return (
-    //@ts-ignore props mismatch
-    <Canvas {...props}>
-      <ThemeContext.Provider value={theme}>
-        {children}
-      </ThemeContext.Provider>
-    </Canvas>
+    <>
+      <Canvas camera={{ far: 1000 }} shadowMap>
+        <ThemeContext.Provider value={theme}>
+          <Game state={state} dispatch={dispatch} {...props} />
+        </ThemeContext.Provider>
+      </Canvas>
+      {state.gameState === GameStates.LOSE &&
+        <Container>
+          <button onClick={handleClick}> back? </button>
+        </Container>
+      }
+    </>
   )
 }

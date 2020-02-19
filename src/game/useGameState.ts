@@ -3,6 +3,8 @@ import {
   useEffect,
   Reducer,
   useState,
+  ReactNode,
+  Dispatch
 } from 'react';
 import { useFrame } from 'react-three-fiber';
 
@@ -20,12 +22,12 @@ export enum GameStates {
 type InitAction = { type: 'INIT', payload: { map: CubeMap } };
 type ForwardAction = {
   type: 'FORWARD';
-  payload: { map: CubeMap; };
 };
 type LeftAction = { type: 'LEFT' };
 type RightAction = { type: 'RIGHT' };
+type PlayAction = { type: 'PLAY' };
 
-type Action = ForwardAction | LeftAction | RightAction | InitAction;
+type Action = ForwardAction | LeftAction | RightAction | InitAction | PlayAction;
 
 export type State = {
   direction: string;
@@ -35,11 +37,16 @@ export type State = {
   gameState: GameStates;
 };
 
+export type GameDispatch = Dispatch<Action>;
+
 let time = 0;
 // lock 'locks' user input so that the snake can't turn multiple times before moving forward
+// let lock = false;
 let lock = false;
 
-export const useGameState = (map: CubeMap, speed: number) => {
+let _map: CubeMap | null = null;
+
+export const useGameState = (map: CubeMap): [State, GameDispatch] => {
   const [snakeVisible, setSnakeVisible] = useState(true);
   const [state, dispatch] = useReducer<Reducer<State, Action>, any>(
     reducer,
@@ -48,7 +55,7 @@ export const useGameState = (map: CubeMap, speed: number) => {
       snake: [map[0]],
       emptySpaces: new Array(map.length - 1).fill(1).map((_, i) => i + 1),
       food: null,
-      gameState: GameStates.PLAYING
+      gameState: GameStates.PLAYING,
     },
     (state: State) => {
       const index = state.emptySpaces[
@@ -63,6 +70,8 @@ export const useGameState = (map: CubeMap, speed: number) => {
   );
 
   useEffect(() => {
+    // this is probably bad design, idk
+    _map = map;
     dispatch({ type: 'INIT', payload: { map } })
   }, [map.length]);
 
@@ -72,31 +81,6 @@ export const useGameState = (map: CubeMap, speed: number) => {
       window.removeEventListener('keydown', move);
     };
   }, []);
-
-
-  useFrame((_, delta) => {
-    time += delta;
-
-    switch (state.gameState) {
-      case GameStates.PLAYING:
-        if (speed > 0 && time > 1 / speed) {
-          lock = false;
-          dispatch({ type: 'FORWARD', payload: { map } });
-          time = 0;
-        }
-        break;
-      case GameStates.LOSE:
-        if (time > 0.5) {
-          setSnakeVisible(val => !val);
-          time = 0;
-        }
-        break;
-      case GameStates.WIN:
-        break;
-      default:
-    }
-
-  });
 
   const move = (e: KeyboardEvent) => {
     if (lock) return;
@@ -116,7 +100,9 @@ export const useGameState = (map: CubeMap, speed: number) => {
   };
 
 
-  return snakeVisible ? state : { ...state, snake: [] };
+  const returnedState = snakeVisible ? state : { ...state, snake: [] };
+
+  return [returnedState, dispatch];
 
 };
 
@@ -158,14 +144,21 @@ const reducer = (state: State, action: Action) => {
         snake: [map[0]],
         emptySpaces: empty,
         food: map[foodIndex],
+        gameState: GameStates.MENU
       }
+    case 'PLAY':
+      return { ...state, gameState: GameStates.PLAYING };
     case 'FORWARD':
       const [newHead, newDir] = forwardNode(head, direction);
-      map = action.payload.map;
+      if (!_map) {
+        return state;
+      }
+
+      lock = false;
       if (newHead.index === food.index) {
         const newSnake = [newHead, ...snake];
         // need to filter out from all the indexs not the ones already in empty spaces
-        const newEmptySpaces = map.reduce((agg: number[], node) => {
+        const newEmptySpaces = _map.reduce((agg: number[], node) => {
           if (!newSnake.some(s => s.index === node.index)) agg.push(node.index);
           return agg;
         }, []);
@@ -175,7 +168,7 @@ const reducer = (state: State, action: Action) => {
           ...state,
           direction: newDir,
           snake: newSnake,
-          food: map[newFoodIndex],
+          food: _map[newFoodIndex],
           emptySpaces: newEmptySpaces,
         };
       }

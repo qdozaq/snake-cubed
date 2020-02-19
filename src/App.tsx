@@ -29,7 +29,7 @@ const App = () => {
         <>
           <GlobalStyle />
           <Container inMenu={!start}>
-            <Game size={size} speed={speed} start={start} />
+            <Game size={size} speed={speed} start={start} toggle={toggleStart} />
             <MenuContainer show={!(start || howTo)}>
               <MenuButton onClick={toggleStart} clicked={start}>Start</MenuButton>
               <MenuButton onClick={toggleHowTo} clicked={howTo}>How to play</MenuButton>

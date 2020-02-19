@@ -1,5 +1,5 @@
-import React, { useContext, useMemo } from 'react';
-import { Vector3, Euler, BoxBufferGeometry, Color, DoubleSide } from 'three';
+import React, { useContext } from 'react';
+import { Vector3, Euler, BoxBufferGeometry } from 'three';
 import { SubdivisionModifier } from 'three/examples/jsm/modifiers/SubdivisionModifier';
 import { ThemeContext } from 'styled-components';
 
