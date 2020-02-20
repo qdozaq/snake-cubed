@@ -37,6 +37,7 @@ const Container = styled.div`
   justify-content: center;
   width: 100vw;
   height: 100vh;
+  text-align: center;
 
   &.menu-exit {
     opacity: 1;

@@ -55,7 +55,7 @@ export const useGameState = (map: CubeMap): [State, GameDispatch] => {
       snake: [map[0]],
       emptySpaces: new Array(map.length - 1).fill(1).map((_, i) => i + 1),
       food: null,
-      gameState: GameStates.PLAYING,
+      gameState: GameStates.MENU,
     },
     (state: State) => {
       const index = state.emptySpaces[

@@ -1,10 +1,11 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import Arrow from './ArrowButton';
-import DragAnimation from './DragAnimation';
+import Arrow from '../components/ArrowButton';
+import FoodIcon from '../components/FoodIcon';
+import DragAnimation from '../components/DragAnimation';
+import Paragraph from '../components/Paragraph';
 import MoveAnimation from './MoveAnimation';
-import FoodIcon from './FoodIcon';
 
 const HowToSection = styled.section<{ reverse?: boolean }>`
   display: flex;
@@ -14,17 +15,6 @@ const HowToSection = styled.section<{ reverse?: boolean }>`
     align-items: center;
   }
 `;
-
-const Paragraph = styled.p`
-  margin: 1rem;
-  width: 100%;
-  font-size: 1.2rem;
-
-  a {
-    color: ${({ theme }) => theme.secondaryAccent}
-  }
-`;
-
 
 const HowTo = styled.div`
   width: 35rem;

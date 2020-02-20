@@ -3,7 +3,7 @@ import styled, { ThemeProvider, css } from 'styled-components';
 
 import Game from './game/Game';
 import themes from './themes';
-import { MenuContainer, MenuButton } from './Menu';
+import { MenuContainer, MenuButton } from './components/Menu';
 import GlobalStyle from './GlobalStyle';
 import HowToPage from './howto/HowToPage';
 
@@ -70,17 +70,4 @@ const Container = styled.div<{ inMenu: boolean }>`
   height: 100vh;
   width: 100vw;
   background-image: ${({ theme }) => `radial-gradient(${theme.background.from} 80%, ${theme.background.to})`};
-
-  canvas {
-    transition: opacity 1.5s cubic-bezier(${curve}), transform 1.5s cubic-bezier(${curve});
-  }
-
-  ${({ inMenu }) => {
-    return inMenu && css`
-    canvas {
-      opacity: .1;
-      transform: translateY(-5rem);
-    }
-    `
-  }}
 `;

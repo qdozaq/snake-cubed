@@ -1,7 +1,10 @@
 import React, { useState, useContext, useMemo, useEffect, ReactNode } from 'react';
-import { Canvas, CanvasProps, useFrame } from 'react-three-fiber';
+import { Canvas, useFrame, CanvasProps } from 'react-three-fiber';
 import styled, { ThemeContext } from 'styled-components';
 
+import { MenuContainer, MenuButton } from '../components/Menu';
+import FoodIcon from '../components/FoodIcon';
+import Paragraph from '../components/Paragraph';
 import Cube from './Cube';
 import Rotation from './Rotation';
 import { useGameState, GameStates, State, GameDispatch } from './useGameState';
@@ -9,14 +12,6 @@ import Snake from './Snake';
 import Food from './Food';
 
 import { buildCubeMap } from './map';
-
-const Container = styled.div`
-  display: block;
-  position: absolute;
-  top: 0;
-  height: 100vh;
-  width: 100vw;
-`;
 
 type GameProps = {
   size: number;
@@ -151,16 +146,34 @@ export default function GameWrapper(props: GameProps) {
 
   return (
     <>
-      <Canvas camera={{ far: 1000 }} shadowMap>
+      <CanvasStyled
+        camera={{ far: 1000 }}
+        shadowMap
+        menu={state.gameState === GameStates.MENU ? 1 : 0}
+        faded={state.gameState !== GameStates.PLAYING ? 1 : 0}
+      >
         <ThemeContext.Provider value={theme}>
           <Game state={state} dispatch={dispatch} {...props} />
         </ThemeContext.Provider>
-      </Canvas>
-      {state.gameState === GameStates.LOSE &&
-        <Container>
-          <button onClick={handleClick}> back? </button>
-        </Container>
-      }
+      </CanvasStyled>
+      <MenuContainer show={state.gameState === GameStates.LOSE}>
+        <Paragraph>
+          <FoodIcon /> : {state.snake.length}
+        </Paragraph>
+        <MenuButton onClick={handleClick} clicked={!props.start}>Ok</MenuButton>
+      </MenuContainer>
     </>
   )
 }
+
+const curve = `.36,.18,.26,.95`;
+
+type CanvasStyledProps = CanvasProps & { faded: number, menu: number }
+
+const CanvasStyled = styled(Canvas) <CanvasStyledProps>`
+  canvas {
+    transition: opacity 1.5s cubic-bezier(${curve}), transform 1.5s cubic-bezier(${curve});
+    ${({ faded }) => faded && 'opacity: .1'};
+    ${({ menu }) => menu && 'transform: translateY(-5rem)'};
+  }
+`
