@@ -1,4 +1,4 @@
-import React, { useState, useContext, useMemo, useEffect, ReactNode } from 'react';
+import React, { useState, useContext, useMemo, useEffect } from 'react';
 import { Canvas, useFrame, CanvasProps } from 'react-three-fiber';
 import styled, { ThemeContext } from 'styled-components';
 
@@ -69,7 +69,10 @@ const Game = ({ size, speed, start, toggle, state, dispatch }: GamePropsWithStat
         shadow-mapSize-height={2048}
         castShadow
       />
-      <Rotation distance={size * 1.2} start={start} state={state.gameState}>
+      <MobileButton left={false} onClick={() => dispatch({ type: 'RIGHT' })} />
+      <MobileButton left={true} onClick={() => dispatch({ type: 'LEFT' })} />
+
+      <Rotation distance={size * 1.2} state={state.gameState}>
         <Cube size={size} />
         {/* <axesHelper args={[SIZE * 2]}></axesHelper> */}
         <Food position={food.vector} />
@@ -79,53 +82,42 @@ const Game = ({ size, speed, start, toggle, state, dispatch }: GamePropsWithStat
   );
 };
 
-// const Plane = ({ size }: { size: number }) => (
-//   <mesh
-//     rotation={[-Math.PI / 2, 0, 0]}
-//     position={[0, -size * 1.5, 5]}
-//     receiveShadow={true}
-//   >
-//     <planeBufferGeometry attach="geometry" args={[20, 20]} />
-//     <meshStandardMaterial
-//       color='pink'
-//       attach="material"
-//       side={DoubleSide}
-//       roughness={0}
-//     />
-//   </mesh>
-// );
+type MobileButtonProps = {
+  onClick: VoidFunction;
+  left: boolean;
+}
 
-const YouLose = styled.div`
-  position: absolute;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100vw;
-  height: 100vh;
-  font-size: 10vw;
-  text-align: center;
-  color: pink;
-`;
+const buttonPanelSize = 40;
 
-const Buttons = styled.div`
-  position: absolute;
-  display: flex;
-  justify-content: center;
-  width: 100vw;
-  bottom: 2rem;
-  button {
-    width: 100%;
-    height: 2rem;
+const MobileButton = ({ onClick, left }: MobileButtonProps) => {
+  const [pressed, setPressed] = useState(false);
+
+  const handleDown = e => {
+    if (e.pointerType === 'touch') {
+      setPressed(true);
+      onClick();
+    }
   }
-`;
 
-const left = () => {
-  window.dispatchEvent(new KeyboardEvent('keydown', { key: 'a' }));
-};
+  const handleUp = () => setPressed(false);
 
-const right = () => {
-  window.dispatchEvent(new KeyboardEvent('keydown', { key: 'd' }));
-};
+  return (
+    <mesh
+      position={[left ? -buttonPanelSize / 2 : buttonPanelSize / 2, 0, -20]}
+      onPointerDown={handleDown}
+      onPointerUp={handleUp}
+      onPointerOut={handleUp}
+    >
+      <planeBufferGeometry attach="geometry" args={[buttonPanelSize, buttonPanelSize]} />
+      <meshBasicMaterial
+        color='white'
+        transparent={true}
+        opacity={pressed ? .2 : 0}
+        attach="material"
+      />
+    </mesh>
+  )
+}
 
 export default function GameWrapper(props: GameProps) {
   const theme = useContext(ThemeContext);

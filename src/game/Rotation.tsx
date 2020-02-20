@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useEffect } from 'react';
 import { useDrag } from 'react-use-gesture';
 import { useSpring, a } from 'react-spring/three';
 import { Mesh, Vector3 } from 'three';
@@ -7,7 +7,6 @@ import { GameStates } from './useGameState';
 type Props = {
   children: React.ReactNode;
   distance: number;
-  start?: boolean;
   state: GameStates;
 };
 
@@ -16,8 +15,7 @@ let prevX = 0,
 
 const UP = new Vector3(0, 1, 0);
 
-export default ({ children, distance, start, state }: Props) => {
-  const [started, setStarted] = useState(false);
+export default ({ children, distance, state }: Props) => {
   const [{ rotation }, set] = useSpring(() => ({
     rotation: [Math.PI / 4, Math.PI / 4 - Math.PI, 0]
   }));
@@ -40,7 +38,8 @@ export default ({ children, distance, start, state }: Props) => {
 
   const dampen = 100;
   const bindDrag = useDrag(
-    ({ delta: [dx, dy] }) => {
+    ({ delta: [dx, dy], event }) => {
+      event?.stopPropagation()
       const [x, y] = [dx / dampen, dy / dampen];
 
       if (ref.current) {

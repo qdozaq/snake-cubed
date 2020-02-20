@@ -5,7 +5,7 @@ import Arrow from '../components/ArrowButton';
 import FoodIcon from '../components/FoodIcon';
 import DragAnimation from '../components/DragAnimation';
 import Paragraph from '../components/Paragraph';
-import MoveAnimation from './MoveAnimation';
+import MoveAnimation from '../components/MoveAnimation';
 
 const HowToSection = styled.section<{ reverse?: boolean }>`
   display: flex;
@@ -61,7 +61,10 @@ export default function HowToPage({ toggle }: Props) {
       </HowToSection>
       <HowToSection reverse>
         <Paragraph>
-          Use the &larr; &rarr; keys, or <b>A</b> and <b>D</b> to change the direction of the snake. <b>Left</b> and <b>right</b> are tied to the snake's orientation, which is important to keep in mind when figuring out which direction you want to go.
+          Use the &larr; &rarr; keys, <b>A</b> and <b>D</b>, or tap the left and right sides of the screen (for mobile) to change the direction of the snake.
+          <br />
+          <br />
+          <b>Left</b> and <b>right</b> are tied to the snake's orientation, which is important to keep in mind when figuring out which direction you want to go.
         </Paragraph>
         <MoveAnimation />
       </HowToSection>
