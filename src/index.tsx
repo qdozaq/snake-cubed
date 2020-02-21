@@ -5,7 +5,11 @@ import * as serviceWorker from './serviceWorker';
 import ReactGA from 'react-ga';
 
 const trackingCode = 'UA-131385998-2';
-ReactGA.initialize(trackingCode);
+ReactGA.initialize(trackingCode, {
+  gaOptions: {
+    siteSpeedSampleRate: 100
+  }
+});
 ReactGA.plugin.require('displayfeatures');
 
 ReactDOM.render(<App />, document.getElementById('root'));
