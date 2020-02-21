@@ -12,6 +12,9 @@ ReactGA.initialize(trackingCode, {
 });
 ReactGA.plugin.require('displayfeatures');
 
+ReactGA.set({ page: '/' });
+ReactGA.pageview('/');
+
 ReactDOM.render(<App />, document.getElementById('root'));
 
 // If you want your app to work offline and load faster, you can change
