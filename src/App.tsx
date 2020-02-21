@@ -8,14 +8,14 @@ import { MenuContainer, MenuButton } from './components/Menu';
 import GlobalStyle from './GlobalStyle';
 import HowToPage from './howto/HowToPage';
 
-const trackingCode = 'UA-131385998-2';
-ReactGA.initialize(trackingCode);
-
 const DEFAULT_SIZE = 3;
 const DEFAULT_SPEED = 2;
 
 const App = () => {
-  useEffect(() => ReactGA.pageview('/'), []);
+  useEffect(() => {
+    ReactGA.initialize('UA-131385998-2');
+    ReactGA.pageview('/');
+  }, []);
 
   const [size, setSize] = useState(DEFAULT_SIZE);
   const [speed, setSpeed] = useState(DEFAULT_SPEED);
