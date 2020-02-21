@@ -13,7 +13,13 @@ const DEFAULT_SPEED = 2;
 
 const App = () => {
   useEffect(() => {
-    ReactGA.initialize('UA-131385998-2');
+    ReactGA.initialize('UA-131385998-2',
+      {
+        gaOptions: {
+          siteSpeedSampleRate: 100
+        }
+      }
+    );
     ReactGA.pageview('/');
   }, []);
 
