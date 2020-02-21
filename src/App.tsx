@@ -1,6 +1,7 @@
-import React, { useState, ChangeEvent } from 'react';
-import styled, { ThemeProvider, css } from 'styled-components';
+import React, { useState, ChangeEvent, useEffect } from 'react';
+import styled, { ThemeProvider } from 'styled-components';
 
+import initGA from './analytics';
 import Game from './game/Game';
 import themes from './themes';
 import { MenuContainer, MenuButton } from './components/Menu';
@@ -11,6 +12,8 @@ const DEFAULT_SIZE = 3;
 const DEFAULT_SPEED = 2;
 
 const App = () => {
+  useEffect(() => initGA());
+
   const [size, setSize] = useState(DEFAULT_SIZE);
   const [speed, setSpeed] = useState(DEFAULT_SPEED);
 
