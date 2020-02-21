@@ -1,6 +1,7 @@
 import React, { useState, useContext, useMemo, useEffect } from 'react';
 import { Canvas, useFrame, CanvasProps } from 'react-three-fiber';
 import styled, { ThemeContext } from 'styled-components';
+import ReactGA from 'react-ga';
 
 import { MenuContainer, MenuButton } from '../components/Menu';
 import FoodIcon from '../components/FoodIcon';
@@ -127,6 +128,7 @@ export default function GameWrapper(props: GameProps) {
 
   useEffect(() => {
     if (props.start) {
+      ReactGA.event({ category: 'Engagement', action: 'Clicked Start' });
       dispatch({ type: 'PLAY' });
     }
   }, [props.start]);

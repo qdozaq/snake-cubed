@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
+import ReactGA from 'react-ga';
 
 import Arrow from '../components/ArrowButton';
 import FoodIcon from '../components/FoodIcon';
@@ -40,6 +41,8 @@ type Props = {
 }
 
 export default function HowToPage({ toggle }: Props) {
+  useEffect(() => ReactGA.event({ category: 'Engagement', action: 'Clicked How To' }), []);
+
   return (
     <HowTo>
       <Arrow onClick={toggle} />
