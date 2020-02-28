@@ -4,7 +4,7 @@ import styled, { ThemeContext } from 'styled-components';
 import ReactGA from 'react-ga';
 
 import { MenuContainer, MenuButton } from '../components/Menu';
-import FoodIcon from '../components/FoodIcon';
+import FoodIcon from '../components/icons/FoodIcon';
 import Paragraph from '../components/Paragraph';
 import Cube from './Cube';
 import Rotation from './Rotation';
@@ -19,16 +19,23 @@ type GameProps = {
   speed: number;
   start: boolean;
   toggle: VoidFunction;
-}
+};
 
 type GamePropsWithState = GameProps & {
   state: State;
   dispatch: GameDispatch;
-}
+};
 
 let time = 0;
 
-const Game = ({ size, speed, start, toggle, state, dispatch }: GamePropsWithState) => {
+const Game = ({
+  size,
+  speed,
+  start,
+  toggle,
+  state,
+  dispatch
+}: GamePropsWithState) => {
   const [snakeVisible, setSnakeVisible] = useState(true);
   const { snake, food } = state;
 
@@ -55,7 +62,6 @@ const Game = ({ size, speed, start, toggle, state, dispatch }: GamePropsWithStat
         break;
       default:
     }
-
   });
 
   return (
@@ -86,7 +92,7 @@ const Game = ({ size, speed, start, toggle, state, dispatch }: GamePropsWithStat
 type MobileButtonProps = {
   onClick: VoidFunction;
   left: boolean;
-}
+};
 
 const buttonPanelSize = 40;
 
@@ -98,7 +104,7 @@ const MobileButton = ({ onClick, left }: MobileButtonProps) => {
       setPressed(true);
       onClick();
     }
-  }
+  };
 
   const handleUp = () => setPressed(false);
 
@@ -109,16 +115,19 @@ const MobileButton = ({ onClick, left }: MobileButtonProps) => {
       onPointerUp={handleUp}
       onPointerOut={handleUp}
     >
-      <planeBufferGeometry attach="geometry" args={[buttonPanelSize, buttonPanelSize]} />
+      <planeBufferGeometry
+        attach="geometry"
+        args={[buttonPanelSize, buttonPanelSize]}
+      />
       <meshBasicMaterial
-        color='white'
+        color="white"
         transparent={true}
-        opacity={pressed ? .2 : 0}
+        opacity={pressed ? 0.2 : 0}
         attach="material"
       />
     </mesh>
-  )
-}
+  );
+};
 
 export default function GameWrapper(props: GameProps) {
   const theme = useContext(ThemeContext);
@@ -136,7 +145,7 @@ export default function GameWrapper(props: GameProps) {
   const handleClick = () => {
     dispatch({ type: 'INIT', payload: { map: cubeMap } });
     props.toggle();
-  }
+  };
 
   return (
     <>
@@ -154,20 +163,23 @@ export default function GameWrapper(props: GameProps) {
         <Paragraph>
           <FoodIcon /> : {state.snake.length}
         </Paragraph>
-        <MenuButton onClick={handleClick} clicked={!props.start}>Ok</MenuButton>
+        <MenuButton onClick={handleClick} clicked={!props.start}>
+          Ok
+        </MenuButton>
       </MenuContainer>
     </>
-  )
+  );
 }
 
 const curve = `.36,.18,.26,.95`;
 
-type CanvasStyledProps = CanvasProps & { faded: number, menu: number }
+type CanvasStyledProps = CanvasProps & { faded: number; menu: number };
 
-const CanvasStyled = styled(Canvas) <CanvasStyledProps>`
+const CanvasStyled = styled(Canvas)<CanvasStyledProps>`
   canvas {
-    transition: opacity 1.5s cubic-bezier(${curve}), transform 1.5s cubic-bezier(${curve});
+    transition: opacity 1.5s cubic-bezier(${curve}),
+      transform 1.5s cubic-bezier(${curve});
     ${({ faded }) => faded && 'opacity: .1'};
     ${({ menu }) => menu && 'transform: translateY(-5rem)'};
   }
-`
+`;
