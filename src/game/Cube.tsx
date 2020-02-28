@@ -9,11 +9,11 @@ type Props = {
   size: number;
 };
 
-const Cube = ({ size }: Props) => {
+const Cube = React.memo(({ size }: Props) => {
   const theme = useContext(ThemeContext);
 
   return (
-    <group >
+    <group>
       <Grid size={size} color={theme.cube}></Grid>
       {/* 
       transparent inner box */}
@@ -26,42 +26,50 @@ const Cube = ({ size }: Props) => {
           attach="material"
           color={theme.background.from}
           transparent={true}
-          opacity={.5}
+          opacity={0.5}
           side={BackSide}
         />
       </mesh>
     </group>
   );
-};
+});
 
 type GridProps = Props & { color: string };
 
 const Grid = ({ size, color }: GridProps) => {
+  console.log('grid');
   const gridGeometry = useMemo(() => createGrid(size), [size]);
-  return <mesh geometry={gridGeometry}>
-    <meshPhysicalMaterial
-      attach="material"
-      color={color}
-      roughness={0.8}
-      clearcoat={0.1}
-      reflectivity={0.2}
-      metalness={0.3}
-    />
-  </mesh>
+  return (
+    <mesh geometry={gridGeometry}>
+      <meshPhysicalMaterial
+        attach="material"
+        color={color}
+        roughness={0.8}
+        clearcoat={0.1}
+        reflectivity={0.2}
+        metalness={0.3}
+      />
+    </mesh>
+  );
 };
 
-const lineThickness = .02;
+const lineThickness = 0.02;
 const radialSegments = 3;
 
 // Grid is created by generating a single side and copy to all the other sides of the cube
-// All sides are then merged together into one geometry for simplicity and performance 
+// All sides are then merged together into one geometry for simplicity and performance
 const createGrid = (size: number) => {
   const lines: any = [];
 
   const start = new Vector3(size / 2, 0, size / 2);
 
   for (let i = 0; i <= size; i++) {
-    const line = new CylinderBufferGeometry(lineThickness, lineThickness, size, radialSegments);
+    const line = new CylinderBufferGeometry(
+      lineThickness,
+      lineThickness,
+      size,
+      radialSegments
+    );
     line.translate(start.x, start.y, start.z);
     const rotate = line.clone().rotateZ(Math.PI / 2);
     lines.push(line, rotate);
@@ -76,8 +84,11 @@ const createGrid = (size: number) => {
   const right = gridSide.clone().rotateY(Math.PI / 2);
   const left = right.clone().translate(-size, 0, 0);
 
-  const grid = BufferGeometryUtils.mergeBufferGeometries([gridSide, bottom, top, left, right, back], false);
+  const grid = BufferGeometryUtils.mergeBufferGeometries(
+    [gridSide, bottom, top, left, right, back],
+    false
+  );
   return grid;
-}
+};
 
 export default Cube;
