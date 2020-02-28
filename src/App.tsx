@@ -7,19 +7,18 @@ import themes from './themes';
 import { MenuContainer, MenuButton } from './components/Menu';
 import GlobalStyle from './GlobalStyle';
 import HowToPage from './howto/HowToPage';
+import Settings from './Settings';
 
 const DEFAULT_SIZE = 3;
 const DEFAULT_SPEED = 2;
 
 const App = () => {
   useEffect(() => {
-    ReactGA.initialize('UA-131385998-2',
-      {
-        gaOptions: {
-          siteSpeedSampleRate: 100
-        }
+    ReactGA.initialize('UA-131385998-2', {
+      gaOptions: {
+        siteSpeedSampleRate: 100
       }
-    );
+    });
     ReactGA.pageview('/');
   }, []);
 
@@ -32,8 +31,10 @@ const App = () => {
   const toggleStart = () => setStart(!start);
   const toggleHowTo = () => setHowTo(!howTo);
 
-  const handleSize = (e: ChangeEvent<HTMLInputElement>) => setSize(parseInt(e.target.value));
-  const handleSpeed = (e: ChangeEvent<HTMLInputElement>) => setSpeed(parseInt(e.target.value));
+  const handleSize = (e: ChangeEvent<HTMLInputElement>) =>
+    setSize(parseInt(e.target.value));
+  const handleSpeed = (e: ChangeEvent<HTMLInputElement>) =>
+    setSpeed(parseInt(e.target.value));
 
   return (
     <>
@@ -41,10 +42,19 @@ const App = () => {
         <>
           <GlobalStyle />
           <Container inMenu={!start}>
-            <Game size={size} speed={speed} start={start} toggle={toggleStart} />
+            <Game
+              size={size}
+              speed={speed}
+              start={start}
+              toggle={toggleStart}
+            />
             <MenuContainer show={!(start || howTo)}>
-              <MenuButton onClick={toggleStart} clicked={start}>Start</MenuButton>
-              <MenuButton onClick={toggleHowTo} clicked={howTo}>How to play</MenuButton>
+              <MenuButton onClick={toggleStart} clicked={start}>
+                Start
+              </MenuButton>
+              <MenuButton onClick={toggleHowTo} clicked={howTo}>
+                How to play
+              </MenuButton>
             </MenuContainer>
             <MenuContainer show={howTo}>
               <HowToPage toggle={toggleHowTo} />
@@ -56,6 +66,7 @@ const App = () => {
             <Slider onChange={handleSpeed} type='range' min='1' max='20' value={speed.toString()} />
           </SlidersContainer> */}
           </Container>
+          <Settings />
         </>
       </ThemeProvider>
     </>
@@ -63,7 +74,6 @@ const App = () => {
 };
 
 export default App;
-
 
 const Slider = styled.input`
   width: 100%;
@@ -75,11 +85,9 @@ const SlidersContainer = styled.div`
   width: 15rem;
 `;
 
-
-const curve = `.36,.18,.26,.95`;
-
 const Container = styled.div<{ inMenu: boolean }>`
   height: 100vh;
   width: 100vw;
-  background-image: ${({ theme }) => `radial-gradient(${theme.background.from} 80%, ${theme.background.to})`};
+  background-image: ${({ theme }) =>
+    `radial-gradient(${theme.background.from} 80%, ${theme.background.to})`};
 `;

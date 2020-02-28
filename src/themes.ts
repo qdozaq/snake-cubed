@@ -2,6 +2,7 @@ export default {
   light: {
     primary: '#ff80ae',
     secondary: '#111',
+    secondaryFaded: '#a5476a',
     accent: '#52B4CC',
     secondaryAccent: '#FFF20E',
     background: { from: '#ff80ae', to: '#bd5e81' },
@@ -11,6 +12,6 @@ export default {
     // food: 'yellow'
     food: '#FFF20E',
     menuButton: '#a5476a',
-    menuButtonHover: '#3c1020',
+    menuButtonHover: '#3c1020'
   }
 };

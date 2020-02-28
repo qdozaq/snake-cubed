@@ -1,7 +1,7 @@
 import React, { ReactNode } from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
-const Button = styled.button`
+const Button = styled.button<{ underline: boolean }>`
   cursor: pointer;
   background: none;
   border: none;
@@ -11,18 +11,25 @@ const Button = styled.button`
 
   transition: border-bottom-color 0.2s ease-in-out;
 
-  &:hover,
-  :active,
-  :focus {
-    border-bottom-color: ${({ theme }) => theme.secondary};
-  }
+  ${({ underline }) =>
+    underline &&
+    css`
+      &:hover,
+      :active,
+      :focus {
+        border-bottom-color: ${({ theme }) => theme.secondary};
+      }
+    `}
 `;
 
 type Props = {
   onClick?: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
+  underline?: boolean;
   children: ReactNode;
 };
 
-export default ({ onClick, children }: Props) => (
-  <Button onClick={onClick}>{children}</Button>
+export default ({ onClick, underline = true, children }: Props) => (
+  <Button onClick={onClick} underline={underline}>
+    {children}
+  </Button>
 );
