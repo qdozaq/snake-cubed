@@ -1,12 +1,4 @@
-import {
-  useReducer,
-  useEffect,
-  Reducer,
-  useState,
-  ReactNode,
-  Dispatch
-} from 'react';
-import { useFrame } from 'react-three-fiber';
+import { useReducer, useEffect, Reducer, useState, Dispatch } from 'react';
 
 import { PositionNode, invertDirection, Direction } from './PositionNode';
 import { CubeMap } from './map';
@@ -19,7 +11,7 @@ export enum GameStates {
   WIN
 }
 
-type InitAction = { type: 'INIT', payload: { map: CubeMap } };
+type InitAction = { type: 'INIT'; payload: { map: CubeMap } };
 type ForwardAction = {
   type: 'FORWARD';
 };
@@ -27,7 +19,12 @@ type LeftAction = { type: 'LEFT' };
 type RightAction = { type: 'RIGHT' };
 type PlayAction = { type: 'PLAY' };
 
-type Action = ForwardAction | LeftAction | RightAction | InitAction | PlayAction;
+type Action =
+  | ForwardAction
+  | LeftAction
+  | RightAction
+  | InitAction
+  | PlayAction;
 
 export type State = {
   direction: string;
@@ -39,7 +36,6 @@ export type State = {
 
 export type GameDispatch = Dispatch<Action>;
 
-let time = 0;
 // lock 'locks' user input so that the snake can't turn multiple times before moving forward
 // let lock = false;
 let lock = false;
@@ -55,12 +51,11 @@ export const useGameState = (map: CubeMap): [State, GameDispatch] => {
       snake: [map[0]],
       emptySpaces: new Array(map.length - 1).fill(1).map((_, i) => i + 1),
       food: null,
-      gameState: GameStates.MENU,
+      gameState: GameStates.MENU
     },
     (state: State) => {
-      const index = state.emptySpaces[
-        Math.floor(Math.random() * state.emptySpaces.length)
-      ]
+      const index =
+        state.emptySpaces[Math.floor(Math.random() * state.emptySpaces.length)];
 
       return {
         ...state,
@@ -72,7 +67,7 @@ export const useGameState = (map: CubeMap): [State, GameDispatch] => {
   useEffect(() => {
     // this is probably bad design, idk
     _map = map;
-    dispatch({ type: 'INIT', payload: { map } })
+    dispatch({ type: 'INIT', payload: { map } });
   }, [map.length]);
 
   useEffect(() => {
@@ -83,9 +78,6 @@ export const useGameState = (map: CubeMap): [State, GameDispatch] => {
   }, []);
 
   const move = (e: KeyboardEvent) => {
-    if (lock) return;
-
-    lock = true;
     switch (e.key.toUpperCase()) {
       case 'D':
       case 'ARROWRIGHT':
@@ -99,11 +91,9 @@ export const useGameState = (map: CubeMap): [State, GameDispatch] => {
     }
   };
 
-
   const returnedState = snakeVisible ? state : { ...state, snake: [] };
 
   return [returnedState, dispatch];
-
 };
 
 const forwardNode = (
@@ -145,7 +135,7 @@ const reducer = (state: State, action: Action) => {
         emptySpaces: empty,
         food: map[foodIndex],
         gameState: GameStates.MENU
-      }
+      };
     case 'PLAY':
       return { ...state, gameState: GameStates.PLAYING };
     case 'FORWARD':
@@ -169,7 +159,7 @@ const reducer = (state: State, action: Action) => {
           direction: newDir,
           snake: newSnake,
           food: _map[newFoodIndex],
-          emptySpaces: newEmptySpaces,
+          emptySpaces: newEmptySpaces
         };
       }
       const newSnake = [newHead, ...snake.slice(0, -1)];
@@ -182,10 +172,18 @@ const reducer = (state: State, action: Action) => {
       return { ...state, direction: newDir, snake: newSnake };
 
     case 'LEFT':
+      if (lock) {
+        return state;
+      }
+      lock = true;
       console.log('left');
       newDirection = turn('left', direction, currentSide);
       return { ...state, direction: newDirection };
     case 'RIGHT':
+      if (lock) {
+        return state;
+      }
+      lock = true;
       console.log('right');
       newDirection = turn('right', direction, currentSide);
       return { ...state, direction: newDirection };
