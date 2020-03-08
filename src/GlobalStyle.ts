@@ -5,7 +5,6 @@ export default createGlobalStyle`
   body {
   height: 100vh;
   color: ${props => {
-    console.log(props);
     // @ts-ignore
     return props.theme.secondary;
   }};

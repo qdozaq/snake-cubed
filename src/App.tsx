@@ -24,12 +24,15 @@ const App = () => {
 
   const [size, setSize] = useState(DEFAULT_SIZE);
   const [speed, setSpeed] = useState(DEFAULT_SPEED);
+  const [theme, setTheme] = useState(false);
 
   const [start, setStart] = useState(false);
   const [howTo, setHowTo] = useState(false);
 
   const toggleStart = () => setStart(!start);
   const toggleHowTo = () => setHowTo(!howTo);
+
+  const toggleTheme = (val: boolean) => setTheme(val);
 
   const handleSize = (e: ChangeEvent<HTMLInputElement>) =>
     setSize(parseInt(e.target.value));
@@ -38,7 +41,7 @@ const App = () => {
 
   return (
     <>
-      <ThemeProvider theme={themes.light}>
+      <ThemeProvider theme={theme ? themes.dark : themes.light}>
         <>
           <GlobalStyle />
           <Container inMenu={!start}>
@@ -66,7 +69,7 @@ const App = () => {
             <Slider onChange={handleSpeed} type='range' min='1' max='20' value={speed.toString()} />
           </SlidersContainer> */}
           </Container>
-          <Settings />
+          <Settings toggleTheme={toggleTheme} />
         </>
       </ThemeProvider>
     </>

@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useRef } from 'react';
-import styled from 'styled-components';
+import React, { useState, useEffect, useRef, useContext } from 'react';
+import styled, { ThemeContext } from 'styled-components';
 import { CSSTransition } from 'react-transition-group';
 
 import Gear from './components/icons/GearIcon';
@@ -13,16 +13,15 @@ const IconContainer = styled.div`
 
 const SettingsContainer = styled.div`
   position: absolute;
+  color: white;
   left: 3rem;
   top: 1.5rem;
-  /* transform: translate(3rem, 1.5rem); */
   width: auto;
   height: auto;
   padding: 1rem;
-  background: ${({ theme }) => theme.secondary};
+  background: #111;
   border-radius: 5px;
   box-shadow: 3px 3px 16px 3px rgba(0, 0, 0, 0.3);
-  /* background: #222; */
 
   transform-origin: top left;
   transition: transform 200ms cubic-bezier(0.13, 0.87, 0.32, 0.95);
@@ -45,12 +44,16 @@ const SettingsContainer = styled.div`
   }
 `;
 
-const SettingLabel = styled.p`
+const SettingLabel = styled.h4`
   color: white;
-  margin: 0;
+  margin: 0.5rem 0;
 `;
 
-export default () => {
+type Props = {
+  toggleTheme: (val: boolean) => void;
+};
+
+export default ({ toggleTheme }: Props) => {
   const [toggle, setToggle] = useState(true);
   const gearRef = useRef<SVGElement>();
   const settingsRef = useRef() as React.RefObject<HTMLDivElement>;
@@ -85,7 +88,9 @@ export default () => {
       >
         <SettingsContainer ref={settingsRef}>
           <SettingLabel>Theme</SettingLabel>
-          <Toggle />
+          <ThemeToggle>
+            Light <Toggle toggle={toggleTheme} /> Dark
+          </ThemeToggle>
           <SettingLabel>Cube Size</SettingLabel>
           <SettingLabel>Speed</SettingLabel>
         </SettingsContainer>
@@ -94,13 +99,40 @@ export default () => {
   );
 };
 
+const ThemeToggle = styled.span`
+  font-weight: 200;
+  display: inline-flex;
+`;
+
 /**
  * From https://codepen.io/mburnette/pen/LxNxNg
  */
-const Toggle = () => {
+type ToggleProps = {
+  toggle: (val: boolean) => void;
+};
+
+const Toggle = ({ toggle }: ToggleProps) => {
+  const ref = useRef<HTMLInputElement>(null);
+  const { name } = useContext(ThemeContext);
+
+  useEffect(() => {
+    if (ref.current) {
+      ref.current.checked = name === 'dark';
+    }
+  }, []);
+
   return (
     <>
-      <Input type="checkbox" id="switch" />
+      <Input
+        ref={ref}
+        type="checkbox"
+        id="switch"
+        onChange={() => {
+          if (ref && ref.current) {
+            toggle(ref.current.checked);
+          }
+        }}
+      />
       <Label
         //@ts-ignore
         for="switch"
@@ -111,44 +143,48 @@ const Toggle = () => {
   );
 };
 
+const size = 3;
+
 const Input = styled.input`
   height: 0;
   width: 0;
-  visibility: hidden;
+  /* visibility: hidden; */
+  display: none;
 `;
 
 const Label = styled.label`
   cursor: pointer;
   text-indent: -9999px;
-  width: 200px;
-  height: 100px;
-  background: black;
+  width: ${size}rem;
+  height: ${size / 2}rem;
+  background: #222;
   display: block;
-  border-radius: 100px;
+  border-radius: 50px;
   position: relative;
+  margin: 0 0.25rem;
 
   ${Input}:checked + & {
-    background: ${({ theme }) => theme.primary};
+    background: #ff80ae;
   }
 
   ${Input}:checked + &:after {
-    left: calc(100% - 5px);
+    left: calc(100% - 2.5px);
     transform: translateX(-100%);
   }
 
   &:after {
     content: '';
     position: absolute;
-    top: 5px;
-    left: 5px;
-    width: 90px;
-    height: 90px;
+    top: 1px;
+    left: 1px;
+    width: ${size / 2 - 0.1}rem;
+    height: ${size / 2 - 0.1}rem;
     background: #fff;
-    border-radius: 90px;
+    border-radius: ${size / 2 - 0.1}rem;
     transition: 0.3s;
   }
 
   &:active:after {
-    width: 130px;
+    width: ${size / 1.5}rem;
   }
 `;

@@ -14,7 +14,7 @@ const Cube = React.memo(({ size }: Props) => {
 
   return (
     <group>
-      <Grid size={size} color={theme.cube}></Grid>
+      <Grid size={size} color={theme.secondary}></Grid>
       {/* 
       transparent inner box */}
       <mesh>
@@ -37,7 +37,6 @@ const Cube = React.memo(({ size }: Props) => {
 type GridProps = Props & { color: string };
 
 const Grid = ({ size, color }: GridProps) => {
-  console.log('grid');
   const gridGeometry = useMemo(() => createGrid(size), [size]);
   return (
     <mesh geometry={gridGeometry}>
