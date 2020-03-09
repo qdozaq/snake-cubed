@@ -69,7 +69,13 @@ const App = () => {
             <Slider onChange={handleSpeed} type='range' min='1' max='20' value={speed.toString()} />
           </SlidersContainer> */}
           </Container>
-          <Settings toggleTheme={toggleTheme} />
+          <Settings
+            toggleTheme={toggleTheme}
+            size={size}
+            handleSize={handleSize}
+            speed={speed}
+            handleSpeed={handleSpeed}
+          />
         </>
       </ThemeProvider>
     </>

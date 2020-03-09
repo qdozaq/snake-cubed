@@ -17,8 +17,8 @@ const SVG = styled.svg`
 
 export default (props: any) => (
   <SVG
-    height="2rem"
-    width="2rem"
+    height="100%"
+    width="100%"
     viewBox="0 0 512 512"
     xmlns="http://www.w3.org/2000/svg"
     ref={props.gearRef}

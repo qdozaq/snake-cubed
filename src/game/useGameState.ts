@@ -12,6 +12,7 @@ export enum GameStates {
 }
 
 type InitAction = { type: 'INIT'; payload: { map: CubeMap } };
+type ResetAction = { type: 'RESET'; payload: { map: CubeMap } };
 type ForwardAction = {
   type: 'FORWARD';
 };
@@ -24,7 +25,8 @@ type Action =
   | LeftAction
   | RightAction
   | InitAction
-  | PlayAction;
+  | PlayAction
+  | ResetAction;
 
 export type State = {
   direction: string;
@@ -67,7 +69,7 @@ export const useGameState = (map: CubeMap): [State, GameDispatch] => {
   useEffect(() => {
     // this is probably bad design, idk
     _map = map;
-    dispatch({ type: 'INIT', payload: { map } });
+    dispatch({ type: 'RESET', payload: { map } });
   }, [map.length]);
 
   useEffect(() => {
@@ -122,9 +124,12 @@ const reducer = (state: State, action: Action) => {
   const currentSide = head.direction;
   let newDirection: string;
   let map: CubeMap;
+  let gameState = state.gameState;
 
   switch (action.type) {
     case 'INIT':
+      gameState = GameStates.MENU;
+    case 'RESET':
       map = action.payload.map;
       const empty = new Array(map.length - 1).fill(1).map((_, i) => i + 1);
       const foodIndex = empty[Math.floor(Math.random() * empty.length)];
@@ -134,7 +139,7 @@ const reducer = (state: State, action: Action) => {
         snake: [map[0]],
         emptySpaces: empty,
         food: map[foodIndex],
-        gameState: GameStates.MENU
+        gameState
       };
     case 'PLAY':
       return { ...state, gameState: GameStates.PLAYING };

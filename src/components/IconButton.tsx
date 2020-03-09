@@ -8,6 +8,7 @@ const Button = styled.button<{ underline: boolean }>`
   border-bottom: solid 0.1rem;
   border-bottom-color: rgba(0, 0, 0, 0);
   outline: none;
+  padding: 0;
 
   transition: border-bottom-color 0.2s ease-in-out;
 
