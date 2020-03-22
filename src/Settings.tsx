@@ -73,7 +73,7 @@ export default ({
   size,
   speed
 }: Props) => {
-  const [toggle, setToggle] = useState(true);
+  const [toggle, setToggle] = useState(false);
 
   // For closing when clicking outside settings. Disabled for now
   // const gearRef = useRef<SVGElement>();

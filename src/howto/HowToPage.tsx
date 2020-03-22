@@ -8,10 +8,12 @@ import FoodIcon from '../components/icons/FoodIcon';
 import DragAnimation from '../components/icons/DragAnimation';
 import Paragraph from '../components/Paragraph';
 import MoveAnimation from '../components/icons/MoveAnimation';
+import Gear from '../components/icons/GearIcon';
 
 const HowToSection = styled.section<{ reverse?: boolean }>`
   display: flex;
   justify-content: center;
+  padding: 0 15rem;
   @media only screen and (max-width: 38rem) {
     flex-direction: ${props => (props.reverse ? 'column-reverse' : 'column')};
     align-items: center;
@@ -19,8 +21,12 @@ const HowToSection = styled.section<{ reverse?: boolean }>`
 `;
 
 const HowTo = styled.div`
-  width: 35rem;
+  width: 100vw;
   margin: 0;
+  overflow: hidden;
+  overflow-y: auto;
+  padding-bottom: 5rem;
+  padding-top: 5rem;
 
   h1 {
     text-align: center;
@@ -30,10 +36,6 @@ const HowTo = styled.div`
   @media only screen and (max-width: 38rem) {
     width: auto;
     margin: 0 2rem;
-    padding-bottom: 5rem;
-    padding-top: 5rem;
-    overflow: hidden;
-    overflow-y: auto;
   }
 `;
 
@@ -53,18 +55,20 @@ export default function HowToPage({ toggle }: Props) {
         <Arrow />
       </IconButton>
       <h1>Objective</h1>
-      <Paragraph>
-        Ever played{' '}
-        <a href="https://en.wikipedia.org/wiki/Snake_(video_game_genre)">
-          snake
-        </a>
-        ? Well this is <em>Snake Cubed</em>. Get it? Cause it's a cube?
-        <br />
-        <br />
-        Anyway, like snake, your goal is to collect as many of these{' '}
-        <FoodIcon /> as possible. As you collect more the larger your snake
-        grows and if you run into yourself <b>GAME OVER!</b>
-      </Paragraph>
+      <HowToSection>
+        <Paragraph>
+          Ever played{' '}
+          <a href="https://en.wikipedia.org/wiki/Snake_(video_game_genre)">
+            snake
+          </a>
+          ? Well this is <em>Snake Cubed</em>. Get it? Cause it's a cube?
+          <br />
+          <br />
+          Anyway, like snake, your goal is to collect as many of these{' '}
+          <FoodIcon /> as possible. As you collect more the larger your snake
+          grows and if you run into yourself <b>GAME OVER!</b>
+        </Paragraph>
+      </HowToSection>
       <h1>Controls</h1>
       <HowToSection>
         <DragAnimation />
@@ -82,6 +86,17 @@ export default function HowToPage({ toggle }: Props) {
           you want to go.
         </Paragraph>
         <MoveAnimation />
+      </HowToSection>
+      <HowToSection>
+        <Paragraph>
+          Click the{' '}
+          <span
+            style={{ width: '2rem', height: '2rem', display: 'inline-block' }}
+          >
+            <Gear />
+          </span>{' '}
+          in the corner for additional game settings!
+        </Paragraph>
       </HowToSection>
     </HowTo>
   );
