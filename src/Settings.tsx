@@ -4,6 +4,7 @@ import { CSSTransition } from 'react-transition-group';
 
 import Gear from './components/icons/GearIcon';
 import IconButton from './components/IconButton';
+import GithubIcon from './components/icons/GithubIcon';
 import Range from './components/RangeSlider';
 import Toggle from './components/ToggleButton';
 
@@ -12,7 +13,6 @@ const IconContainer = styled.div`
   top: 0;
   margin: 0.5rem;
   width: 2rem;
-  height: 2rem;
 `;
 
 const SettingsContainer = styled.div`
@@ -100,6 +100,9 @@ export default ({
         <IconButton underline={false} onClick={() => setToggle(!toggle)}>
           <Gear />
         </IconButton>
+        <a href="https://github.com/qdozaq/snake-cubed">
+          <GithubIcon />
+        </a>
       </IconContainer>
       <CSSTransition
         in={toggle}

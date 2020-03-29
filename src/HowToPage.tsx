@@ -2,13 +2,13 @@ import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import ReactGA from 'react-ga';
 
-import Arrow from '../components/icons/ArrowIcon';
-import IconButton from '../components/IconButton';
-import FoodIcon from '../components/icons/FoodIcon';
-import DragAnimation from '../components/icons/DragAnimation';
-import Paragraph from '../components/Paragraph';
-import MoveAnimation from '../components/icons/MoveAnimation';
-import Gear from '../components/icons/GearIcon';
+import Arrow from './components/icons/ArrowIcon';
+import IconButton from './components/IconButton';
+import FoodIcon from './components/icons/FoodIcon';
+import DragAnimation from './components/icons/DragAnimation';
+import Paragraph from './components/Paragraph';
+import MoveAnimation from './components/icons/MoveAnimation';
+import Gear from './components/icons/GearIcon';
 
 const HowToSection = styled.section<{ reverse?: boolean }>`
   display: flex;

@@ -6,7 +6,7 @@ import Game from './game/Game';
 import themes from './themes';
 import { MenuContainer, MenuButton } from './components/Menu';
 import GlobalStyle from './GlobalStyle';
-import HowToPage from './howto/HowToPage';
+import HowToPage from './HowToPage';
 import Settings from './Settings';
 
 const DEFAULT_SIZE = 3;
@@ -62,12 +62,6 @@ const App = () => {
             <MenuContainer show={howTo}>
               <HowToPage toggle={toggleHowTo} />
             </MenuContainer>
-            {/* <SlidersContainer>
-            <span>Size: {size}</span>
-            <Slider onChange={handleSize} type='range' min='1' max='20' value={size.toString()} />
-            <span>Speed: {speed}</span>
-            <Slider onChange={handleSpeed} type='range' min='1' max='20' value={speed.toString()} />
-          </SlidersContainer> */}
           </Container>
           <Settings
             toggleTheme={toggleTheme}
@@ -83,16 +77,6 @@ const App = () => {
 };
 
 export default App;
-
-const Slider = styled.input`
-  width: 100%;
-`;
-
-const SlidersContainer = styled.div`
-  position: absolute;
-  top: 0;
-  width: 15rem;
-`;
 
 const Container = styled.div<{ inMenu: boolean }>`
   height: 100vh;
