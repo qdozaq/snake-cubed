@@ -75,25 +75,6 @@ export default ({
 }: Props) => {
   const [toggle, setToggle] = useState(false);
 
-  // For closing when clicking outside settings. Disabled for now
-  // const gearRef = useRef<SVGElement>();
-  // const settingsRef = useRef() as React.RefObject<HTMLDivElement>;
-
-  // useEffect(() => {
-  //   const close = ({ target }: MouseEvent) => {
-  //     if (
-  //       !gearRef?.current?.contains(target as Node) &&
-  //       !settingsRef?.current?.contains(target as Node)
-  //     ) {
-  //       setToggle(false);
-  //     }
-  //   };
-
-  //   document.addEventListener('click', close);
-
-  //   return () => document.removeEventListener('click', close);
-  // }, []);
-
   return (
     <>
       <IconContainer>

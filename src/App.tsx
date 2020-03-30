@@ -8,6 +8,7 @@ import { MenuContainer, MenuButton } from './components/Menu';
 import GlobalStyle from './GlobalStyle';
 import HowToPage from './HowToPage';
 import Settings from './Settings';
+import useStateWithStorage from './hooks/useStateWithStorage';
 
 const DEFAULT_SIZE = 3;
 const DEFAULT_SPEED = 2;
@@ -22,17 +23,15 @@ const App = () => {
     ReactGA.pageview('/');
   }, []);
 
-  const [size, setSize] = useState(DEFAULT_SIZE);
-  const [speed, setSpeed] = useState(DEFAULT_SPEED);
-  const [theme, setTheme] = useState(false);
+  const [size, setSize] = useStateWithStorage('size', DEFAULT_SIZE);
+  const [speed, setSpeed] = useStateWithStorage('speed', DEFAULT_SPEED);
+  const [theme, setTheme] = useStateWithStorage('theme', false);
 
   const [start, setStart] = useState(false);
   const [howTo, setHowTo] = useState(false);
 
   const toggleStart = () => setStart(!start);
   const toggleHowTo = () => setHowTo(!howTo);
-
-  const toggleTheme = (val: boolean) => setTheme(val);
 
   const handleSize = (e: ChangeEvent<HTMLInputElement>) =>
     setSize(parseInt(e.target.value));
@@ -64,7 +63,7 @@ const App = () => {
             </MenuContainer>
           </Container>
           <Settings
-            toggleTheme={toggleTheme}
+            toggleTheme={setTheme}
             size={size}
             handleSize={handleSize}
             speed={speed}
