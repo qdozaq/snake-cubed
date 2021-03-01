@@ -13,7 +13,7 @@
     "react-transition-group": "^4.3.0",
     "react-use-gesture": "^6.0.14",
     "styled-components": "^5.0.1",
-    "three": "^0.113.2",
+    "three": "^0.125.0",
     "typescript": "3.7.2"
   },
   "scripts": {
